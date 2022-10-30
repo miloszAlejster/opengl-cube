@@ -30,3 +30,5 @@
 *.exe
 *.out
 *.app
+/.vs
+/cube/.vs/cube/v16
