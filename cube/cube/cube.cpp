@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 
-float vertices[] = {
+float cubeVertices[] = {
     // pos              // col
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
     0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
@@ -47,7 +47,7 @@ float vertices[] = {
     -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f
 };
 
-const char* vertex_shader_text =
+const char* vertex_shader_cube =
 "#version 330 core\n"
 "uniform mat4 MVP;\n"
 "layout (location = 0) in vec3 aPos;\n"
@@ -59,7 +59,7 @@ const char* vertex_shader_text =
 "    vertexColor = aColor;\n"
 "}\n";
 
-const char* fragment_shader_text =
+const char* fragment_shader_cube =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
 "in vec3 vertexColor;\n"
@@ -81,6 +81,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 unsigned int setVertexShader(const char* shader, unsigned int shaderReference);
 unsigned int setFragmentShader(const char* shader, unsigned int shaderReference);
 unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment);
+void setVertices(unsigned int &VBO, unsigned int &VAO);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -108,8 +109,8 @@ int main(void) {
     // init shaders
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    vertexShader = setVertexShader(vertex_shader_text, vertexShader);
-    fragmentShader = setFragmentShader(fragment_shader_text, fragmentShader);
+    vertexShader = setVertexShader(vertex_shader_cube, vertexShader);
+    fragmentShader = setFragmentShader(fragment_shader_cube, fragmentShader);
     // init program
     unsigned int shaderProgram = glCreateProgram();
     shaderProgram = setProgram(shaderProgram, vertexShader, fragmentShader);
@@ -118,18 +119,10 @@ int main(void) {
     // clear shaders
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+    // set vertex buffer and array object
     unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // position attribute
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    // color attribute
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    setVertices(VBO, VAO);
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -143,8 +136,10 @@ int main(void) {
         ratio = width / (float)height;
 
         mat4x4_identity(m);
+        // move cube
         mat4x4_translate(m, (float)glfwGetTime() * 0.3f, 0.f, 0.f);
-        mat4x4_rotate(m, m, 0.f, 0.4f, 0.06f, (float)glfwGetTime());
+        // rotate cube
+        mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         mat4x4_mul(mvp, p, m);
 
@@ -170,7 +165,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 unsigned int setVertexShader(const char* shader, unsigned int ShaderReference) {
     // vertex shader
-    glShaderSource(ShaderReference, 1, &vertex_shader_text, NULL);
+    glShaderSource(ShaderReference, 1, &vertex_shader_cube, NULL);
     glCompileShader(ShaderReference);
     // check for shader compile errors
     int success;
@@ -211,4 +206,17 @@ unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int 
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
     return program;
+}
+void setVertices(unsigned int &VBO, unsigned int &VAO){
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    // position attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    // color attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 }
