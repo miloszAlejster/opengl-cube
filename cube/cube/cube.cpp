@@ -123,6 +123,19 @@ int main(void) {
     unsigned int VBO, VAO;
     setVertices(VBO, VAO);
 
+    vec3 cubePositions[] = {
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 1.0f},
+        {-1.5f, -2.2f, -2.5f},
+        {-3.8f, -2.0f, -12.3f},
+        {2.4f, -0.4f, -3.5f},
+        {-1.7f, 3.0f, -7.5f},
+        {1.3f, -2.0f, -2.5f},
+        {1.5f, 2.0f, -2.5f},
+        {1.5f, 0.2f, -1.5f},
+        {-1.3f, 1.0f, -1.5f}
+    };
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -134,20 +147,30 @@ int main(void) {
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
         ratio = width / (float)height;
-
-        mat4x4_identity(m);
-        // move cube
-        mat4x4_translate(m, (float)glfwGetTime() * 0.3f, 0.f, 0.f);
-        // rotate cube
-        mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
-        mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-        mat4x4_mul(mvp, p, m);
-
+        /*
+            mat4x4_identity(m);
+            // move cube
+            mat4x4_translate(m, (float)glfwGetTime() * 0.3f, 0.f, 0.f);
+            // rotate cube
+            mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
+            mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+            mat4x4_mul(mvp, p, m);
+        */
         // pass transform to shader
         glBindVertexArray(VAO);
-        glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
+        for (unsigned int i = 0; i < 10; i++){
+            float x = *cubePositions[i];
+            float y = *(cubePositions[i] + 1);
+            float z = *(cubePositions[i] + 2);
+            //std::cout << x <<" "<< y<<" "<< z<<"\n";
+            mat4x4_identity(m);
+            mat4x4_translate(m, x, y, z);
+            mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
+            mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+            mat4x4_mul(mvp, p, m);
+            glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
