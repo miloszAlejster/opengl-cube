@@ -46,16 +46,30 @@ float cubeVertices[] = {
     -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
     -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f
 };
+vec3 cubePositions[] = {
+    {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 1.0f},
+    {-1.5f, -2.2f, -2.5f},
+    {-3.8f, -2.0f, -12.3f},
+    {2.4f, -0.4f, -3.5f},
+    {-1.7f, 3.0f, -7.5f},
+    {1.3f, -2.0f, -2.5f},
+    {1.5f, 2.0f, -2.5f},
+    {1.5f, 0.2f, -1.5f},
+    {-1.3f, 1.0f, -1.5f}
+};
 
 const char* vertex_shader_cube =
 "#version 330 core\n"
-"uniform mat4 MVP;\n"
+"uniform mat4 model;\n"
+"uniform mat4 projection;\n"
+"uniform mat4 view;\n"
 "layout (location = 0) in vec3 aPos;\n"
 "layout (location = 1) in vec3 aColor;\n"
 "out vec3 vertexColor;\n"
 "void main()\n"
-"{\n"
-"    gl_Position = MVP * vec4(aPos, 1.0);\n"
+"{\n" 
+"    gl_Position = model * projection * view * vec4(aPos, 1.0f);\n"
 "    vertexColor = aColor;\n"
 "}\n";
 
@@ -65,33 +79,54 @@ const char* fragment_shader_cube =
 "in vec3 vertexColor;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(vertexColor, 1.0);\n"
+"    FragColor = vec4(vertexColor, 1.0f);\n"
 "}\n";
 
 static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
+void processInput(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 unsigned int setVertexShader(const char* shader, unsigned int shaderReference);
 unsigned int setFragmentShader(const char* shader, unsigned int shaderReference);
 unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment);
 void setVertices(unsigned int &VBO, unsigned int &VAO);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
+struct mat4 {
+    mat4x4 mat;
+};
+float toRadians(float degree);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+vec3 cameraPos = { 0.0f, 0.0f, -3.0f };
+vec3 cameraTarget = { 0.0f, 0.0f, 0.0f };
+vec3 cameraDirection;
+vec3 up = { 0.0f, 1.0f, 0.0f };
+vec3 cameraUp = { 0.0f, 1.0f, 0.0f };
+vec3 cameraFront = { 0.0f, 0.0f, -1.0f };
+mat4 view;
+float deltaTime = 0.0f; // Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+bool firstMouse = true;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float lastX = 800.0f / 2.0f;
+float lastY = 600.0f / 2.0f;
+float fov = 45.0f;
 int main(void) {
     GLFWwindow* window;
     GLuint vertex_buffer, vertex_shader, fragment_shader, program;
-    GLint mvp_location;
+    GLint m_location;
+    GLint v_location;
+    GLint p_location;
     glfwSetErrorCallback(error_callback);
     // init glfw
-    if (!glfwInit()) exit(EXIT_FAILURE);
+    if (!glfwInit()) {
+        exit(EXIT_FAILURE);
+    }
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     // create window
@@ -100,9 +135,11 @@ int main(void) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
-    glfwSetKeyCallback(window, key_callback);
+    // config
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(window, mouse_callback);
     gladLoadGL();
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
@@ -115,7 +152,9 @@ int main(void) {
     unsigned int shaderProgram = glCreateProgram();
     shaderProgram = setProgram(shaderProgram, vertexShader, fragmentShader);
     // set uniform
-    mvp_location = glGetUniformLocation(shaderProgram, "MVP");
+    m_location = glGetUniformLocation(shaderProgram, "model");
+    v_location = glGetUniformLocation(shaderProgram, "view");
+    p_location = glGetUniformLocation(shaderProgram, "projection");
     // clear shaders
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
@@ -123,52 +162,37 @@ int main(void) {
     unsigned int VBO, VAO;
     setVertices(VBO, VAO);
 
-    vec3 cubePositions[] = {
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 1.0f},
-        {-1.5f, -2.2f, -2.5f},
-        {-3.8f, -2.0f, -12.3f},
-        {2.4f, -0.4f, -3.5f},
-        {-1.7f, 3.0f, -7.5f},
-        {1.3f, -2.0f, -2.5f},
-        {1.5f, 2.0f, -2.5f},
-        {1.5f, 0.2f, -1.5f},
-        {-1.3f, 1.0f, -1.5f}
-    };
-
     while (!glfwWindowShouldClose(window)) {
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glUseProgram(shaderProgram);
-        // create transformation
-        mat4x4 m, p, mvp;
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float)height;
-        /*
-            mat4x4_identity(m);
-            // move cube
-            mat4x4_translate(m, (float)glfwGetTime() * 0.3f, 0.f, 0.f);
-            // rotate cube
-            mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
-            mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-            mat4x4_mul(mvp, p, m);
-        */
+        ratio = width / (float)height;        
+        processInput(window);
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(shaderProgram);
+        mat4x4 model, projection, mvp;
+        // view
+        vec3 target;
+        vec3_add(target, cameraFront, cameraPos);
+        view = LookAtRH(cameraPos, target, cameraUp);
+        glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        // projection
+        mat4x4_ortho(projection, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
         // pass transform to shader
         glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 10; i++){
-            float x = *cubePositions[i];
-            float y = *(cubePositions[i] + 1);
-            float z = *(cubePositions[i] + 2);
-            //std::cout << x <<" "<< y<<" "<< z<<"\n";
-            mat4x4_identity(m);
-            mat4x4_translate(m, x, y, z);
-            mat4x4_rotate(m, m, 0.2f, 0.4f, 0.06f, (float)glfwGetTime());
-            mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-            mat4x4_mul(mvp, p, m);
-            glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*)mvp);
+        for (int i = 0; i < 10; i++){
+            float x = cubePositions[i][0];
+            float y = cubePositions[i][1];
+            float z = cubePositions[i][2];
+            //std::cout << x << " " << y << " " << z << "\n";
+            mat4x4_translate(model, x, y, z);
+            mat4x4_rotate(model, model, 0.1f, 0.1f, 0.1f, 1.0f);
+            glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         glfwSwapBuffers(window);
@@ -185,6 +209,34 @@ int main(void) {
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+void processInput(GLFWwindow* window){
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+    float cameraSpeed = 2.5f * deltaTime;
+    vec3 moveV;
+    moveV[0] = cameraSpeed * cameraFront[0];
+    moveV[1] = cameraSpeed * cameraFront[1];
+    moveV[2] = cameraSpeed * cameraFront[2];
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        vec3_add(cameraPos, moveV, cameraPos);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        vec3_sub(cameraPos, cameraPos, moveV);
+    }
+    vec3 moveH;
+    vec3_mul_cross(moveH, cameraUp, cameraFront);
+    vec3_norm(moveH, moveH);
+    moveH[0] = cameraSpeed * cameraFront[0];
+    moveH[1] = cameraSpeed * cameraFront[1];
+    moveH[2] = cameraSpeed * cameraFront[2];
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        vec3_sub(cameraPos, cameraPos, moveH);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        vec3_add(cameraPos, moveH, cameraPos);
+    }
 }
 unsigned int setVertexShader(const char* shader, unsigned int ShaderReference) {
     // vertex shader
@@ -242,4 +294,76 @@ void setVertices(unsigned int &VBO, unsigned int &VAO){
     // color attribute
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+}
+float dot_product(vec3 v1, vec3 v2) {
+    float product = 0;
+    for (int i = 0; i < 3; i++) {
+        product += v1[i] * v2[i];
+    }
+    return product;
+}
+struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
+    vec3 zaxis;// The "forward" vector.
+    vec3_sub(zaxis, eye, target);
+    vec3_norm(zaxis, zaxis);    
+    vec3 xaxis;// The "right" vector.
+    vec3_mul_cross(xaxis, zaxis, up);
+    vec3_norm(xaxis, xaxis);
+    vec3 yaxis;// The "up" vector.
+    vec3_mul_cross(yaxis, xaxis, zaxis);
+    vec3_norm(yaxis, yaxis);
+    // Create a 4x4 view matrix from the right, up, forward and eye position vectors
+    mat4 viewMatrix;
+    viewMatrix.mat[0][0] = xaxis[0];
+    viewMatrix.mat[0][1] = yaxis[0];
+    viewMatrix.mat[0][2] = zaxis[0];
+    viewMatrix.mat[0][3] = 0;
+
+    viewMatrix.mat[1][0] = xaxis[1];
+    viewMatrix.mat[1][1] = yaxis[1];
+    viewMatrix.mat[1][2] = zaxis[1];
+    viewMatrix.mat[1][3] = 0;
+
+    viewMatrix.mat[2][0] = xaxis[2];
+    viewMatrix.mat[2][1] = yaxis[2];
+    viewMatrix.mat[2][2] = zaxis[2];
+    viewMatrix.mat[2][3] = 0;
+
+    viewMatrix.mat[3][0] = -dot_product(xaxis, eye);
+    viewMatrix.mat[3][1] = -dot_product(yaxis, eye);
+    viewMatrix.mat[3][2] = -dot_product(zaxis, eye);
+    viewMatrix.mat[3][3] = 1;
+
+    return viewMatrix;
+}
+void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+    if (firstMouse){
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+    yaw += xoffset;
+    pitch += yoffset;
+    if (pitch > 89.0f) {
+        pitch = 89.0f;
+    }
+    if (pitch < -89.0f) {
+        pitch = -89.0f;
+    }
+    vec3 direction;
+    direction[0] = cos((toRadians(yaw)) * cos(toRadians(pitch)));
+    direction[1] = sin(toRadians(pitch));
+    direction[2] = sin(toRadians(yaw) * cos(toRadians(pitch)));
+    vec3_norm(cameraFront, direction);
+}
+float toRadians(float degree){
+    float pi = 3.14159265359;
+    return (degree * (pi / 180));
 }
