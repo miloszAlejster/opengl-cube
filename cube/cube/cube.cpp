@@ -8,7 +8,7 @@
 #include <iostream>
 
 float cubeVertices[] = {
-    // pos              // col
+    // position         // color
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
     0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
     0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
@@ -58,7 +58,6 @@ vec3 cubePositions[] = {
     {1.5f, 0.2f, -1.5f},
     {-1.3f, 1.0f, -1.5f}
 };
-
 const char* vertex_shader_cube =
 "#version 330 core\n"
 "uniform mat4 model;\n"
@@ -92,7 +91,7 @@ unsigned int setVertexShader(const char* shader, unsigned int shaderReference);
 unsigned int setFragmentShader(const char* shader, unsigned int shaderReference);
 unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment);
 void setVertices(unsigned int &VBO, unsigned int &VAO);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double x, double y);
 struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
 struct mat4 {
     mat4x4 mat;
@@ -102,27 +101,24 @@ float toRadians(float degree);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 vec3 cameraPos = { 0.0f, 0.0f, -3.0f };
-vec3 cameraTarget = { 0.0f, 0.0f, 0.0f };
-vec3 cameraDirection;
-vec3 up = { 0.0f, 1.0f, 0.0f };
 vec3 cameraUp = { 0.0f, 1.0f, 0.0f };
 vec3 cameraFront = { 0.0f, 0.0f, -1.0f };
+vec3 up = { 0.0f, 1.0f, 0.0f };
 mat4 view;
-float deltaTime = 0.0f; // Time between current frame and last frame
-float lastFrame = 0.0f; // Time of last frame
+// Time between current frame and last frame
+float deltaTime = 0.0f; 
+// Time of last frame
+float lastFrame = 0.0f; 
 bool firstMouse = true;
 float yaw = -90.0f;
 float pitch = 0.0f;
+float fov = 45.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
-float fov = 45.0f;
 int main(void) {
     GLFWwindow* window;
     GLuint vertex_buffer, vertex_shader, fragment_shader, program;
-    GLint m_location;
-    GLint v_location;
-    GLint p_location;
-    glfwSetErrorCallback(error_callback);
+    GLint m_location, v_location, p_location;
     // init glfw
     if (!glfwInit()) {
         exit(EXIT_FAILURE);
@@ -135,11 +131,13 @@ int main(void) {
         glfwTerminate();
         exit(EXIT_FAILURE);
     }
+    // callbacks
+    glfwSetErrorCallback(error_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
     // config
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
     gladLoadGL();
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
@@ -151,7 +149,7 @@ int main(void) {
     // init program
     unsigned int shaderProgram = glCreateProgram();
     shaderProgram = setProgram(shaderProgram, vertexShader, fragmentShader);
-    // set uniform
+    // set uniforms
     m_location = glGetUniformLocation(shaderProgram, "model");
     v_location = glGetUniformLocation(shaderProgram, "view");
     p_location = glGetUniformLocation(shaderProgram, "projection");
@@ -169,12 +167,12 @@ int main(void) {
         float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
-        ratio = width / (float)height;        
+        ratio = (float)width / (float)height;        
         processInput(window);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shaderProgram);
-        mat4x4 model, projection, mvp;
+        mat4x4 model, projection;
         // view
         vec3 target;
         vec3_add(target, cameraFront, cameraPos);
@@ -220,22 +218,26 @@ void processInput(GLFWwindow* window){
     moveV[1] = cameraSpeed * cameraFront[1];
     moveV[2] = cameraSpeed * cameraFront[2];
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        vec3_add(cameraPos, moveV, cameraPos);
+        std::cout << "W\n";
+        vec3_add(cameraPos, cameraPos, moveV);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        std::cout << "S\n";
         vec3_sub(cameraPos, cameraPos, moveV);
     }
     vec3 moveH;
-    vec3_mul_cross(moveH, cameraUp, cameraFront);
+    vec3_mul_cross(moveH, cameraFront, cameraUp);
     vec3_norm(moveH, moveH);
-    moveH[0] = cameraSpeed * cameraFront[0];
-    moveH[1] = cameraSpeed * cameraFront[1];
-    moveH[2] = cameraSpeed * cameraFront[2];
+    moveH[0] = cameraSpeed * moveH[0];
+    moveH[1] = cameraSpeed * moveH[1];
+    moveH[2] = cameraSpeed * moveH[2];
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        std::cout << "A\n";
         vec3_sub(cameraPos, cameraPos, moveH);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        vec3_add(cameraPos, moveH, cameraPos);
+        std::cout << "D\n";
+        vec3_add(cameraPos, cameraPos, moveH);
     }
 }
 unsigned int setVertexShader(const char* shader, unsigned int ShaderReference) {
@@ -303,14 +305,17 @@ float dot_product(vec3 v1, vec3 v2) {
     return product;
 }
 struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
-    vec3 zaxis;// The "forward" vector.
+    // The "forward" vector.
+    vec3 zaxis;
     vec3_sub(zaxis, eye, target);
     vec3_norm(zaxis, zaxis);    
-    vec3 xaxis;// The "right" vector.
-    vec3_mul_cross(xaxis, zaxis, up);
+    // The "right" vector.
+    vec3 xaxis;
+    vec3_mul_cross(xaxis, up, zaxis);
     vec3_norm(xaxis, xaxis);
-    vec3 yaxis;// The "up" vector.
-    vec3_mul_cross(yaxis, xaxis, zaxis);
+    // The "right" vector.
+    vec3 yaxis;
+    vec3_mul_cross(yaxis, zaxis, xaxis);
     vec3_norm(yaxis, yaxis);
     // Create a 4x4 view matrix from the right, up, forward and eye position vectors
     mat4 viewMatrix;
@@ -328,7 +333,7 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
     viewMatrix.mat[2][1] = yaxis[2];
     viewMatrix.mat[2][2] = zaxis[2];
     viewMatrix.mat[2][3] = 0;
-
+    
     viewMatrix.mat[3][0] = -dot_product(xaxis, eye);
     viewMatrix.mat[3][1] = -dot_product(yaxis, eye);
     viewMatrix.mat[3][2] = -dot_product(zaxis, eye);
@@ -336,7 +341,9 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
 
     return viewMatrix;
 }
-void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+void mouse_callback(GLFWwindow* window, double x, double y){
+    float xpos = x;
+    float ypos = y;
     if (firstMouse){
         lastX = xpos;
         lastY = ypos;
@@ -364,6 +371,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
     vec3_norm(cameraFront, direction);
 }
 float toRadians(float degree){
-    float pi = 3.14159265359;
-    return (degree * (pi / 180));
+    float pi = (float)3.14159265359;
+    return (degree * (pi / 180.0f));
 }
