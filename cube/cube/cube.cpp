@@ -92,6 +92,7 @@ unsigned int setFragmentShader(const char* shader, unsigned int shaderReference)
 unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment);
 void setVertices(unsigned int &VBO, unsigned int &VAO);
 void mouse_callback(GLFWwindow* window, double x, double y);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
 struct mat4 {
     mat4x4 mat;
@@ -135,6 +136,7 @@ int main(void) {
     glfwSetErrorCallback(error_callback);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glfwSetScrollCallback(window, scroll_callback);
     // config
     glfwMakeContextCurrent(window);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -179,7 +181,7 @@ int main(void) {
         view = LookAtRH(cameraPos, target, cameraUp);
         glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         // projection
-        mat4x4_perspective(projection, 3.14f / 4.0f, width / (float)height, 0.1f, 900.f);
+        mat4x4_perspective(projection, toRadians(fov), width / (float)height, 0.1f, 900.f);
         glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
         glBindVertexArray(VAO);
         for (int i = 0; i < 10; i++){
@@ -369,4 +371,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
 float toRadians(float degree){
     float pi = (float)3.14159265359;
     return (degree * (pi / 180.0f));
+}
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
+    fov -= (float)yoffset;
+    if (fov < 1.0f) {
+        fov = 1.0f;
+    }
+    if (fov > 45.0f) {
+        fov = 45.0f;
+    }
 }
