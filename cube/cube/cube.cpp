@@ -100,9 +100,9 @@ float toRadians(float degree);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-vec3 cameraPos = { 0.0f, 0.0f, -3.0f };
+vec3 cameraPos = { 0.0f, 0.0f, 3.0f };
 vec3 cameraUp = { 0.0f, 1.0f, 0.0f };
-vec3 cameraFront = { 0.0f, 0.0f, -1.0f };
+vec3 cameraFront = { 0.0f, 0.0f, 1.0f };
 vec3 up = { 0.0f, 1.0f, 0.0f };
 mat4 view;
 // Time between current frame and last frame
@@ -179,17 +179,15 @@ int main(void) {
         view = LookAtRH(cameraPos, target, cameraUp);
         glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         // projection
-        mat4x4_ortho(projection, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+        mat4x4_perspective(projection, 3.14f / 4.0f, width / (float)height, 0.1f, 900.f);
         glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
-        // pass transform to shader
         glBindVertexArray(VAO);
         for (int i = 0; i < 10; i++){
             float x = cubePositions[i][0];
             float y = cubePositions[i][1];
             float z = cubePositions[i][2];
-            //std::cout << x << " " << y << " " << z << "\n";
+            // model
             mat4x4_translate(model, x, y, z);
-            mat4x4_rotate(model, model, 0.1f, 0.1f, 0.1f, 1.0f);
             glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
@@ -316,7 +314,7 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
     // The "right" vector.
     vec3 yaxis;
     vec3_mul_cross(yaxis, zaxis, xaxis);
-    vec3_norm(yaxis, yaxis);
+
     // Create a 4x4 view matrix from the right, up, forward and eye position vectors
     mat4 viewMatrix;
     viewMatrix.mat[0][0] = xaxis[0];
@@ -341,9 +339,7 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
 
     return viewMatrix;
 }
-void mouse_callback(GLFWwindow* window, double x, double y){
-    float xpos = x;
-    float ypos = y;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos){
     if (firstMouse){
         lastX = xpos;
         lastY = ypos;
