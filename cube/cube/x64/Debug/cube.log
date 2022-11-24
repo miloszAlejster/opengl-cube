@@ -1,9 +1,0 @@
-﻿  cube.cpp
-C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(586,18): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(593,18): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(605,51): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(605,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(173,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(354,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(355,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  cube.vcxproj -> C:\Users\milos\source\Code\opengl-cube\cube\x64\Debug\cube.exe
