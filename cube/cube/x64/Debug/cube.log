@@ -3,15 +3,7 @@ C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(586,18): warning C424
 C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(593,18): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
 C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(605,51): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\milos\source\Code\opengl-cube\cube\cube\linmath.h(605,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(166,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(121,42): warning C4101: 'fragment_shader': unreferenced local variable
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(121,27): warning C4101: 'vertex_shader': unreferenced local variable
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(121,59): warning C4101: 'program': unreferenced local variable
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(121,12): warning C4101: 'vertex_buffer': unreferenced local variable
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(350,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(351,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(354,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(355,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(356,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(357,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(173,28): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(354,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\milos\source\Code\opengl-cube\cube\cube\cube.cpp(355,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   cube.vcxproj -> C:\Users\milos\source\Code\opengl-cube\cube\x64\Debug\cube.exe

@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 
-float cubeVertices[] = {
+const float cubeVertices[] = {
     // position         // color
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
     0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
@@ -39,16 +39,16 @@ float cubeVertices[] = {
     0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
     -0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
     -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 0.0f
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,
+    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
+    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f
 };
-vec3 cubePositions[] = {
+const vec3 cubePositions[] = {
     {0.0f, 0.0f, 0.0f},
-    {0.0f, 0.0f, 1.0f},
+    {2.0f, 5.0f, -15.0f},
     {-1.5f, -2.2f, -2.5f},
     {-3.8f, -2.0f, -12.3f},
     {2.4f, -0.4f, -3.5f},
@@ -56,19 +56,29 @@ vec3 cubePositions[] = {
     {1.3f, -2.0f, -2.5f},
     {1.5f, 2.0f, -2.5f},
     {1.5f, 0.2f, -1.5f},
-    {-1.3f, 1.0f, -1.5f}
+    {-1.3f, 1.0f, -1.5f},
+    {1.0f, 1.0f, 1.0f},
+    {2.0f, 2.0f, -15.0f},
+    {.0f, 3.f, .1f},
+    {-3.8f, -1.0f, -12.3f},
+    {2.6f, -1.4f, -33.5f},
+    {-10.7f, 3.0f, -7.5f},
+    {120.3f, -2.0f, -2.5f},
+    {122.5f, 211.0f, -2.5f},
+    {12.5f, 22.2f, -1.5f},
+    {-11.3f, 14.0f, -1.5f}
 };
 const char* vertex_shader_cube =
 "#version 330 core\n"
-"uniform mat4 model;\n"
 "uniform mat4 projection;\n"
 "uniform mat4 view;\n"
+"uniform mat4 model;\n"
 "layout (location = 0) in vec3 aPos;\n"
 "layout (location = 1) in vec3 aColor;\n"
 "out vec3 vertexColor;\n"
 "void main()\n"
 "{\n" 
-"    gl_Position = model * projection * view * vec4(aPos, 1.0f);\n"
+"    gl_Position = projection * view * model * vec4(aPos, 1.0f);\n"
 "    vertexColor = aColor;\n"
 "}\n";
 
@@ -87,10 +97,10 @@ static void error_callback(int error, const char* description)
 }
 void processInput(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-unsigned int setVertexShader(const char* shader, unsigned int shaderReference);
-unsigned int setFragmentShader(const char* shader, unsigned int shaderReference);
-unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment);
-void setVertices(unsigned int &VBO, unsigned int &VAO);
+GLuint setVertexShader(const char* shader, GLuint shaderReference);
+GLuint setFragmentShader(const char* shader, GLuint shaderReference);
+GLuint setProgram(GLuint program, GLuint vertex, GLuint fragment);
+void setVertices(GLuint &VBO, GLuint &VAO);
 void mouse_callback(GLFWwindow* window, double x, double y);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
@@ -103,9 +113,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 vec3 cameraPos = { 0.0f, 0.0f, 3.0f };
 vec3 cameraUp = { 0.0f, 1.0f, 0.0f };
-vec3 cameraFront = { 0.0f, 0.0f, 1.0f };
-vec3 up = { 0.0f, 1.0f, 0.0f };
-mat4 view;
+vec3 cameraFront = { 0.0f, 0.0f, -1.0f };
 // Time between current frame and last frame
 float deltaTime = 0.0f; 
 // Time of last frame
@@ -118,7 +126,7 @@ float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
 int main(void) {
     GLFWwindow* window;
-    GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+    GLuint vertexShader, fragmentShader, shaderProgram, VBO, VAO;
     GLint m_location, v_location, p_location;
     // init glfw
     if (!glfwInit()) {
@@ -144,12 +152,12 @@ int main(void) {
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
     // init shaders
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     vertexShader = setVertexShader(vertex_shader_cube, vertexShader);
     fragmentShader = setFragmentShader(fragment_shader_cube, fragmentShader);
     // init program
-    unsigned int shaderProgram = glCreateProgram();
+    shaderProgram = glCreateProgram();
     shaderProgram = setProgram(shaderProgram, vertexShader, fragmentShader);
     // set uniforms
     m_location = glGetUniformLocation(shaderProgram, "model");
@@ -159,36 +167,36 @@ int main(void) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     // set vertex buffer and array object
-    unsigned int VBO, VAO;
     setVertices(VBO, VAO);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        float ratio;
         int width, height;
         glfwGetFramebufferSize(window, &width, &height);
-        ratio = (float)width / (float)height;        
+        float aspect = (float)width / (float)height;
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glUseProgram(shaderProgram);
         mat4x4 model, projection;
+        mat4 view;
         // view
         vec3 target;
         vec3_add(target, cameraFront, cameraPos);
         view = LookAtRH(cameraPos, target, cameraUp);
         glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         // projection
-        mat4x4_perspective(projection, toRadians(fov), width / (float)height, 0.1f, 900.f);
+        mat4x4_perspective(projection, toRadians(fov), aspect, 0.1f, 100.f);
         glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
         glBindVertexArray(VAO);
-        for (int i = 0; i < 10; i++){
+        for (unsigned int i = 0; i < 20; i++){
             float x = cubePositions[i][0];
             float y = cubePositions[i][1];
             float z = cubePositions[i][2];
             // model
+            mat4x4_identity(model);
             mat4x4_translate(model, x, y, z);
             glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -240,7 +248,7 @@ void processInput(GLFWwindow* window){
         vec3_add(cameraPos, cameraPos, moveH);
     }
 }
-unsigned int setVertexShader(const char* shader, unsigned int ShaderReference) {
+GLuint setVertexShader(const char* shader, GLuint ShaderReference) {
     // vertex shader
     glShaderSource(ShaderReference, 1, &vertex_shader_cube, NULL);
     glCompileShader(ShaderReference);
@@ -255,7 +263,7 @@ unsigned int setVertexShader(const char* shader, unsigned int ShaderReference) {
     }
     return ShaderReference;
 }
-unsigned int setFragmentShader(const char* shader, unsigned int ShaderReference) {
+GLuint setFragmentShader(const char* shader, GLuint ShaderReference) {
     // fragment shader
     glShaderSource(ShaderReference, 1, &shader, NULL);
     glCompileShader(ShaderReference);
@@ -270,7 +278,7 @@ unsigned int setFragmentShader(const char* shader, unsigned int ShaderReference)
     }
     return ShaderReference;
 }
-unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int fragment) {
+GLuint setProgram(GLuint program, GLuint vertex, GLuint fragment) {
     glAttachShader(program, vertex);
     glAttachShader(program, fragment);
     glLinkProgram(program);
@@ -284,7 +292,7 @@ unsigned int setProgram(unsigned int program, unsigned int vertex, unsigned int 
     }
     return program;
 }
-void setVertices(unsigned int &VBO, unsigned int &VAO){
+void setVertices(GLuint &VBO, GLuint &VAO){
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glBindVertexArray(VAO);
@@ -316,28 +324,27 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up){
     // The "right" vector.
     vec3 yaxis;
     vec3_mul_cross(yaxis, zaxis, xaxis);
-
     // Create a 4x4 view matrix from the right, up, forward and eye position vectors
     mat4 viewMatrix;
     viewMatrix.mat[0][0] = xaxis[0];
     viewMatrix.mat[0][1] = yaxis[0];
     viewMatrix.mat[0][2] = zaxis[0];
-    viewMatrix.mat[0][3] = 0;
+    viewMatrix.mat[0][3] = 0.0f;
 
     viewMatrix.mat[1][0] = xaxis[1];
     viewMatrix.mat[1][1] = yaxis[1];
     viewMatrix.mat[1][2] = zaxis[1];
-    viewMatrix.mat[1][3] = 0;
+    viewMatrix.mat[1][3] = 0.0f;
 
     viewMatrix.mat[2][0] = xaxis[2];
     viewMatrix.mat[2][1] = yaxis[2];
     viewMatrix.mat[2][2] = zaxis[2];
-    viewMatrix.mat[2][3] = 0;
+    viewMatrix.mat[2][3] = 0.0f;
     
     viewMatrix.mat[3][0] = -dot_product(xaxis, eye);
     viewMatrix.mat[3][1] = -dot_product(yaxis, eye);
     viewMatrix.mat[3][2] = -dot_product(zaxis, eye);
-    viewMatrix.mat[3][3] = 1;
+    viewMatrix.mat[3][3] = 1.0f;
 
     return viewMatrix;
 }
@@ -347,10 +354,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
         lastY = ypos;
         firstMouse = false;
     }
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    float xoffset = (float)xpos - lastX;
+    float yoffset = lastY - (float)ypos;
+    lastX = (float)xpos;
+    lastY = (float)ypos;
     float sensitivity = 0.1f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
@@ -363,9 +370,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
         pitch = -89.0f;
     }
     vec3 direction;
-    direction[0] = cos((toRadians(yaw)) * cos(toRadians(pitch)));
+    direction[0] = cos(toRadians(yaw)) * cos(toRadians(pitch));
     direction[1] = sin(toRadians(pitch));
-    direction[2] = sin(toRadians(yaw) * cos(toRadians(pitch)));
+    direction[2] = sin(toRadians(yaw)) * cos(toRadians(pitch));
     vec3_norm(cameraFront, direction);
 }
 float toRadians(float degree){
@@ -374,10 +381,10 @@ float toRadians(float degree){
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
     fov -= (float)yoffset;
-    if (fov < 1.0f) {
-        fov = 1.0f;
+    if (fov < 10.0f) {
+        fov = 10.0f;
     }
-    if (fov > 45.0f) {
-        fov = 45.0f;
+    if (fov > 120.0f) {
+        fov = 120.0f;
     }
 }
