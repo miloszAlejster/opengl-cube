@@ -1,11 +1,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include "linmath.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 const float cubeVertices[] = {
     // position         // color
@@ -68,28 +68,6 @@ const vec3 cubePositions[] = {
     {12.5f, 22.2f, -1.5f},
     {-11.3f, 14.0f, -1.5f}
 };
-const char* vertex_shader_cube =
-"#version 330 core\n"
-"uniform mat4 projection;\n"
-"uniform mat4 view;\n"
-"uniform mat4 model;\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 aColor;\n"
-"out vec3 vertexColor;\n"
-"void main()\n"
-"{\n" 
-"    gl_Position = projection * view * model * vec4(aPos, 1.0f);\n"
-"    vertexColor = aColor;\n"
-"}\n";
-
-const char* fragment_shader_cube =
-"#version 330 core\n"
-"out vec4 FragColor;\n"
-"in vec3 vertexColor;\n"
-"void main()\n"
-"{\n"
-"    FragColor = vec4(vertexColor, 1.0f);\n"
-"}\n";
 
 static void error_callback(int error, const char* description)
 {
@@ -107,7 +85,12 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
 struct mat4 {
     mat4x4 mat;
 };
+struct ShaderProgramSource {
+    std::string VertexSource;
+    std::string FragmentSource;
+};
 float toRadians(float degree);
+static ShaderProgramSource ParseShader(const std::string& path);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -126,7 +109,7 @@ float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
 int main(void) {
     GLFWwindow* window;
-    GLuint vertexShader, fragmentShader, shaderProgram, VBO, VAO;
+    GLuint VBO, VAO;
     GLint m_location, v_location, p_location;
     // init glfw
     if (!glfwInit()) {
@@ -152,20 +135,20 @@ int main(void) {
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
     // init shaders
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    vertexShader = setVertexShader(vertex_shader_cube, vertexShader);
-    fragmentShader = setFragmentShader(fragment_shader_cube, fragmentShader);
-    // init program
-    shaderProgram = glCreateProgram();
-    shaderProgram = setProgram(shaderProgram, vertexShader, fragmentShader);
+    ShaderProgramSource colorShaderSource = ParseShader("Colors.shader");
+    GLuint ColorVertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint ColorFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint ColorShaderProgram = glCreateProgram();
+    ColorVertexShader = setVertexShader(colorShaderSource.VertexSource.c_str(), ColorVertexShader);
+    ColorFragmentShader = setFragmentShader(colorShaderSource.FragmentSource.c_str(), ColorFragmentShader);
+    ColorShaderProgram = setProgram(ColorShaderProgram, ColorVertexShader, ColorFragmentShader);
     // set uniforms
-    m_location = glGetUniformLocation(shaderProgram, "model");
-    v_location = glGetUniformLocation(shaderProgram, "view");
-    p_location = glGetUniformLocation(shaderProgram, "projection");
+    m_location = glGetUniformLocation(ColorShaderProgram, "model");
+    v_location = glGetUniformLocation(ColorShaderProgram, "view");
+    p_location = glGetUniformLocation(ColorShaderProgram, "projection");
     // clear shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    glDeleteShader(ColorVertexShader);
+    glDeleteShader(ColorFragmentShader);
     // set vertex buffer and array object
     setVertices(VBO, VAO);
 
@@ -179,7 +162,7 @@ int main(void) {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(shaderProgram);
+        glUseProgram(ColorShaderProgram);
         mat4x4 model, projection;
         mat4 view;
         // view
@@ -206,7 +189,7 @@ int main(void) {
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(ColorShaderProgram);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -226,11 +209,9 @@ void processInput(GLFWwindow* window){
     moveV[1] = cameraSpeed * cameraFront[1];
     moveV[2] = cameraSpeed * cameraFront[2];
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        std::cout << "W\n";
         vec3_add(cameraPos, cameraPos, moveV);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        std::cout << "S\n";
         vec3_sub(cameraPos, cameraPos, moveV);
     }
     vec3 moveH;
@@ -240,17 +221,15 @@ void processInput(GLFWwindow* window){
     moveH[1] = cameraSpeed * moveH[1];
     moveH[2] = cameraSpeed * moveH[2];
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        std::cout << "A\n";
         vec3_sub(cameraPos, cameraPos, moveH);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        std::cout << "D\n";
         vec3_add(cameraPos, cameraPos, moveH);
     }
 }
 GLuint setVertexShader(const char* shader, GLuint ShaderReference) {
     // vertex shader
-    glShaderSource(ShaderReference, 1, &vertex_shader_cube, NULL);
+    glShaderSource(ShaderReference, 1, &shader, NULL);
     glCompileShader(ShaderReference);
     // check for shader compile errors
     int success;
@@ -387,4 +366,33 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
     if (fov > 120.0f) {
         fov = 120.0f;
     }
+}
+static ShaderProgramSource ParseShader(const std::string& path) {
+    // his idea
+    // https://www.youtube.com/watch?v=2pv0Fbo-7ms
+    std::ifstream stream;
+    try {
+        stream.open(path);
+    } catch (std::ios_base::failure&) {
+        throw std::system_error{ errno, std::generic_category(), path };
+    }
+    enum class ShaderType {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+    std::string line;
+    std::stringstream ss[2];
+    ShaderType type = ShaderType::NONE;
+    while (getline(stream, line)){
+        if (line.find("#shader") != std::string::npos) {
+            if (line.find("vertex") != std::string::npos) {
+                type = ShaderType::VERTEX;
+            }
+            else if (line.find("fragment") != std::string::npos) {
+                type = ShaderType::FRAGMENT;
+            }
+        } else {
+            ss[(int)type] << line << '\n';
+        }
+    }
+    return { ss[0].str(), ss[1].str() };
 }
