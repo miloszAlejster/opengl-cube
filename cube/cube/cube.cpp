@@ -89,8 +89,15 @@ struct ShaderProgramSource {
     std::string VertexSource;
     std::string FragmentSource;
 };
+struct Shader {
+    GLuint Vertex;
+    GLuint Fragment;
+    GLuint Program;
+};
 float toRadians(float degree);
 static ShaderProgramSource ParseShader(const std::string& path);
+void addShader(Shader &shader, std::string path);
+void deleteShader(Shader& shader);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -135,20 +142,14 @@ int main(void) {
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
     // init shaders
-    ShaderProgramSource colorShaderSource = ParseShader("Colors.shader");
-    GLuint ColorVertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint ColorFragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    GLuint ColorShaderProgram = glCreateProgram();
-    ColorVertexShader = setVertexShader(colorShaderSource.VertexSource.c_str(), ColorVertexShader);
-    ColorFragmentShader = setFragmentShader(colorShaderSource.FragmentSource.c_str(), ColorFragmentShader);
-    ColorShaderProgram = setProgram(ColorShaderProgram, ColorVertexShader, ColorFragmentShader);
+    Shader ColorShader;
+    addShader(ColorShader, "Colors.shader");
     // set uniforms
-    m_location = glGetUniformLocation(ColorShaderProgram, "model");
-    v_location = glGetUniformLocation(ColorShaderProgram, "view");
-    p_location = glGetUniformLocation(ColorShaderProgram, "projection");
+    m_location = glGetUniformLocation(ColorShader.Program, "model");
+    v_location = glGetUniformLocation(ColorShader.Program, "view");
+    p_location = glGetUniformLocation(ColorShader.Program, "projection");
     // clear shaders
-    glDeleteShader(ColorVertexShader);
-    glDeleteShader(ColorFragmentShader);
+    deleteShader(ColorShader);
     // set vertex buffer and array object
     setVertices(VBO, VAO);
 
@@ -162,7 +163,7 @@ int main(void) {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(ColorShaderProgram);
+        glUseProgram(ColorShader.Program);
         mat4x4 model, projection;
         mat4 view;
         // view
@@ -189,7 +190,7 @@ int main(void) {
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(ColorShaderProgram);
+    glDeleteProgram(ColorShader.Program);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -395,4 +396,17 @@ static ShaderProgramSource ParseShader(const std::string& path) {
         }
     }
     return { ss[0].str(), ss[1].str() };
+}
+void addShader(Shader &shader, std::string path) {
+    ShaderProgramSource colorShaderSource = ParseShader(path);
+    shader.Vertex = glCreateShader(GL_VERTEX_SHADER);
+    shader.Fragment = glCreateShader(GL_FRAGMENT_SHADER);
+    shader.Program = glCreateProgram();
+    shader.Vertex = setVertexShader(colorShaderSource.VertexSource.c_str(), shader.Vertex);
+    shader.Fragment = setFragmentShader(colorShaderSource.FragmentSource.c_str(), shader.Fragment);
+    shader.Program = setProgram(shader.Program, shader.Vertex, shader.Fragment);
+}
+void deleteShader(Shader& shader) {
+    glDeleteShader(shader.Vertex);
+    glDeleteShader(shader.Fragment);
 }
