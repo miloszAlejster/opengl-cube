@@ -34,5 +34,8 @@
     <None Include="Colors.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
+    <None Include="Light.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

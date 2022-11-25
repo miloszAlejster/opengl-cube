@@ -114,10 +114,13 @@ float pitch = 0.0f;
 float fov = 45.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
+vec3 lightPos = { -1.0f, 2.0f, -1.0f };
 int main(void) {
     GLFWwindow* window;
     GLuint VBO, VAO;
     GLint m_location, v_location, p_location;
+    GLint mL_location, vL_location, pL_location, scaleL_location;
+    GLint objectColor, lightColor, lightPosition;
     // init glfw
     if (!glfwInit()) {
         exit(EXIT_FAILURE);
@@ -150,8 +153,27 @@ int main(void) {
     p_location = glGetUniformLocation(ColorShader.Program, "projection");
     // clear shaders
     deleteShader(ColorShader);
-    // set vertex buffer and array object
+    // set light source
+    Shader LightShader;
+    addShader(LightShader, "Light.shader");
+    glUseProgram(LightShader.Program);
+    objectColor = glGetUniformLocation(LightShader.Program, "objectColor");
+    lightColor = glGetUniformLocation(LightShader.Program, "lightColor");
+    lightPosition = glGetUniformLocation(LightShader.Program, "projection");
+    scaleL_location = glGetUniformLocation(LightShader.Program, "scale");
+    mL_location = glGetUniformLocation(LightShader.Program, "model");
+    vL_location = glGetUniformLocation(LightShader.Program, "view");
+    pL_location = glGetUniformLocation(LightShader.Program, "projection");
+    deleteShader(LightShader);
+    // set vertex buffer and array object for cubes
     setVertices(VBO, VAO);
+    // set vertex array object for light
+    unsigned int lightVAO;
+    glGenVertexArrays(1, &lightVAO);
+    glBindVertexArray(lightVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
@@ -163,6 +185,7 @@ int main(void) {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // cubes
         glUseProgram(ColorShader.Program);
         mat4x4 model, projection;
         mat4 view;
@@ -185,12 +208,35 @@ int main(void) {
             glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+        // light
+        glUseProgram(LightShader.Program);
+        glUniform3f(objectColor, 1.0f, 1.0f, 1.0f);
+        glUniform3f(lightColor, 1.0f, 1.0f, 1.0f);
+        glUniform3fv(lightPosition, 1, lightPos);
+        glUniformMatrix4fv(vL_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(pL_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, lightPos[0], lightPos[1], lightPos[2]);
+        mat4x4 scale;
+        mat4x4_identity(scale);
+        float scaleValue = 0.5f;
+        scale[0][0] = scaleValue;
+        scale[1][1] = scaleValue;
+        scale[2][2] = scaleValue;
+        glUniformMatrix4fv(scaleL_location, 1, GL_FALSE, (const GLfloat*)scale);
+        //scaleL_location
+        glUniformMatrix4fv(mL_location, 1, GL_FALSE, (const GLfloat*)model);
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
     glDeleteVertexArrays(1, &VAO);
+    glDeleteVertexArrays(1, &lightVAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(ColorShader.Program);
+    glDeleteProgram(LightShader.Program);
     glfwDestroyWindow(window);
 
     glfwTerminate();
