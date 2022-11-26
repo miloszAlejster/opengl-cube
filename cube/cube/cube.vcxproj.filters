@@ -37,5 +37,17 @@
     <None Include="Light.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
+    <None Include="Diffuse.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="Ambient.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="Specular.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="Phong.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -8,43 +8,48 @@
 #include <sstream>
 
 const float cubeVertices[] = {
-    // position         // color
-    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    -0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f,
-    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    -0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f,
-    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f,
-    -0.5f, 0.5f, -0.5f, 0.2f, 0.4f, 0.7f,
-    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f,
-    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f,
-    -0.5f, -0.5f, 0.5f, 0.2f, 0.4f, 0.7f,
-    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
-    0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 0.1f,
-    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,
-    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,
-    0.5f, -0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
-    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-    0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-    -0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,
-    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
-    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f
+    // position         // color          // normals
+    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    -0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+
+    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+
+    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+
+    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+
+    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
+    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
+    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f
 };
 const vec3 cubePositions[] = {
     {0.0f, 0.0f, 0.0f},
@@ -114,13 +119,17 @@ float pitch = 0.0f;
 float fov = 45.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
-vec3 lightPos = { -1.0f, 2.0f, -1.0f };
+vec3 lightCol = { 1.0f, 1.0f, 1.0f };
+vec3 cubeCol = { 0.670f, 0.234f, 0.605f };
+vec3 lightPos = { 3.0f, 2.0f, -1.0f };
+vec3 ambientPos = { 0.0f, 0.0f, -1.0f };
+vec3 diffusePos = { 2.0f, 0.0f, -1.0f };
+vec3 specularPos = { 4.0f, 0.0f, -1.0f };
+vec3 phongPos = { 6.0f, 0.0f, -1.0f };
+bool isObservator = false;
 int main(void) {
     GLFWwindow* window;
     GLuint VBO, VAO;
-    GLint m_location, v_location, p_location;
-    GLint mL_location, vL_location, pL_location, scaleL_location;
-    GLint objectColor, lightColor, lightPosition;
     // init glfw
     if (!glfwInit()) {
         exit(EXIT_FAILURE);
@@ -144,27 +153,64 @@ int main(void) {
     gladLoadGL();
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
-    // init shaders
+    // Colors
     Shader ColorShader;
     addShader(ColorShader, "Colors.shader");
     // set uniforms
-    m_location = glGetUniformLocation(ColorShader.Program, "model");
-    v_location = glGetUniformLocation(ColorShader.Program, "view");
-    p_location = glGetUniformLocation(ColorShader.Program, "projection");
-    // clear shaders
-    deleteShader(ColorShader);
-    // set light source
+    GLint m_location = glGetUniformLocation(ColorShader.Program, "model");
+    GLint v_location = glGetUniformLocation(ColorShader.Program, "view");
+    GLint p_location = glGetUniformLocation(ColorShader.Program, "projection");
+    GLint lightcubeColor = glGetUniformLocation(ColorShader.Program, "lighColor");
+    GLint lightcubePosition = glGetUniformLocation(ColorShader.Program, "lighPosition");
+    // Light
     Shader LightShader;
     addShader(LightShader, "Light.shader");
-    glUseProgram(LightShader.Program);
-    objectColor = glGetUniformLocation(LightShader.Program, "objectColor");
-    lightColor = glGetUniformLocation(LightShader.Program, "lightColor");
-    lightPosition = glGetUniformLocation(LightShader.Program, "projection");
-    scaleL_location = glGetUniformLocation(LightShader.Program, "scale");
-    mL_location = glGetUniformLocation(LightShader.Program, "model");
-    vL_location = glGetUniformLocation(LightShader.Program, "view");
-    pL_location = glGetUniformLocation(LightShader.Program, "projection");
-    deleteShader(LightShader);
+    // set uniforms
+    GLint mL_location = glGetUniformLocation(LightShader.Program, "model");
+    GLint vL_location = glGetUniformLocation(LightShader.Program, "view");
+    GLint pL_location = glGetUniformLocation(LightShader.Program, "projection");
+    GLint scaleL_location = glGetUniformLocation(LightShader.Program, "scale");
+    // Ambient
+    Shader AmbientShader;
+    addShader(AmbientShader, "Ambient.shader");
+    // set uniforms
+    GLint Ambient_m_location = glGetUniformLocation(AmbientShader.Program, "model");
+    GLint Ambient_v_location = glGetUniformLocation(AmbientShader.Program, "view");
+    GLint Ambient_p_location = glGetUniformLocation(AmbientShader.Program, "projection");
+    GLint Ambient_cube_color = glGetUniformLocation(AmbientShader.Program, "cubeColor");
+    GLint Ambient_light_color = glGetUniformLocation(AmbientShader.Program, "lightColor");
+    // Diffuse
+    Shader DiffuseShader;
+    addShader(DiffuseShader, "Diffuse.shader");
+    // set uniforms
+    GLint Diffuse_m_location = glGetUniformLocation(DiffuseShader.Program, "model");
+    GLint Diffuse_v_location = glGetUniformLocation(DiffuseShader.Program, "view");
+    GLint Diffuse_p_location = glGetUniformLocation(DiffuseShader.Program, "projection");
+    GLint Diffuse_cube_color = glGetUniformLocation(DiffuseShader.Program, "cubeColor");
+    GLint Diffuse_light_color = glGetUniformLocation(DiffuseShader.Program, "lightColor");
+    GLint Diffuse_light_position = glGetUniformLocation(DiffuseShader.Program, "lightPos");
+    // Specular
+    Shader SpecularShader;
+    addShader(SpecularShader, "Specular.shader");
+    // set uniforms
+    GLint Specular_m_location = glGetUniformLocation(SpecularShader.Program, "model");
+    GLint Specular_v_location = glGetUniformLocation(SpecularShader.Program, "view");
+    GLint Specular_p_location = glGetUniformLocation(SpecularShader.Program, "projection");
+    GLint Specular_cube_color = glGetUniformLocation(SpecularShader.Program, "cubeColor");
+    GLint Specular_light_color = glGetUniformLocation(SpecularShader.Program, "lightColor");
+    GLint Specular_light_position = glGetUniformLocation(SpecularShader.Program, "lightPos");
+    GLint Specular_camera_position = glGetUniformLocation(SpecularShader.Program, "viewPos");
+    // Specular
+    Shader PhongShader;
+    addShader(PhongShader, "Phong.shader");
+    // set uniforms
+    GLint Phong_m_location = glGetUniformLocation(PhongShader.Program, "model");
+    GLint Phong_v_location = glGetUniformLocation(PhongShader.Program, "view");
+    GLint Phong_p_location = glGetUniformLocation(PhongShader.Program, "projection");
+    GLint Phong_cube_color = glGetUniformLocation(PhongShader.Program, "cubeColor");
+    GLint Phong_light_color = glGetUniformLocation(PhongShader.Program, "lightColor");
+    GLint Phong_light_position = glGetUniformLocation(PhongShader.Program, "lightPos");
+    GLint Phong_camera_position = glGetUniformLocation(PhongShader.Program, "viewPos");
     // set vertex buffer and array object for cubes
     setVertices(VBO, VAO);
     // set vertex array object for light
@@ -172,8 +218,42 @@ int main(void) {
     glGenVertexArrays(1, &lightVAO);
     glBindVertexArray(lightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // set vertex array object for ambient
+    unsigned int ambientVAO;
+    glGenVertexArrays(1, &ambientVAO);
+    glBindVertexArray(ambientVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // set vertex array object for diffuse
+    unsigned int diffuseVAO;
+    glGenVertexArrays(1, &diffuseVAO);
+    glBindVertexArray(diffuseVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    // set vertex array object for specular
+    unsigned int specularVAO;
+    glGenVertexArrays(1, &specularVAO);
+    glBindVertexArray(specularVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    // set vertex array object for phong
+    unsigned int phongVAO;
+    glGenVertexArrays(1, &phongVAO);
+    glBindVertexArray(phongVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
@@ -185,38 +265,41 @@ int main(void) {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // cubes
-        glUseProgram(ColorShader.Program);
-        mat4x4 model, projection;
-        mat4 view;
+        mat4x4 model;
         // view
         vec3 target;
         vec3_add(target, cameraFront, cameraPos);
-        view = LookAtRH(cameraPos, target, cameraUp);
-        glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        mat4 view = LookAtRH(cameraPos, target, cameraUp);
         // projection
+        mat4x4 projection;
         mat4x4_perspective(projection, toRadians(fov), aspect, 0.1f, 100.f);
+        // cubes
+        /*
+        glUseProgram(ColorShader.Program);
+        glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        glUniform3fv(lightcubePosition, 1, lightPos);
+        glUniform3fv(lightcubeColor, 1, lightCol);
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 20; i++){
             float x = cubePositions[i][0];
             float y = cubePositions[i][1];
             float z = cubePositions[i][2];
             // model
+            mat4x4 model;
             mat4x4_identity(model);
             mat4x4_translate(model, x, y, z);
             glUniformMatrix4fv(m_location, 1, GL_FALSE, (const GLfloat*)model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+        */
         // light
         glUseProgram(LightShader.Program);
-        glUniform3f(objectColor, 1.0f, 1.0f, 1.0f);
-        glUniform3f(lightColor, 1.0f, 1.0f, 1.0f);
-        glUniform3fv(lightPosition, 1, lightPos);
         glUniformMatrix4fv(vL_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         glUniformMatrix4fv(pL_location, 1, GL_FALSE, (const GLfloat*)projection);
         mat4x4_identity(model);
         mat4x4_translate(model, lightPos[0], lightPos[1], lightPos[2]);
+        // scale
         mat4x4 scale;
         mat4x4_identity(scale);
         float scaleValue = 0.5f;
@@ -224,9 +307,57 @@ int main(void) {
         scale[1][1] = scaleValue;
         scale[2][2] = scaleValue;
         glUniformMatrix4fv(scaleL_location, 1, GL_FALSE, (const GLfloat*)scale);
-        //scaleL_location
         glUniformMatrix4fv(mL_location, 1, GL_FALSE, (const GLfloat*)model);
         glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // ambient
+        glUseProgram(AmbientShader.Program);
+        glUniformMatrix4fv(Ambient_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(Ambient_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, ambientPos[0], ambientPos[1], ambientPos[2]);
+        glUniformMatrix4fv(Ambient_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glUniform3fv(Ambient_cube_color, 1, cubeCol);
+        glUniform3fv(Ambient_light_color, 1, lightCol);
+        glBindVertexArray(ambientVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // diffuse
+        glUseProgram(DiffuseShader.Program);
+        glUniformMatrix4fv(Diffuse_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(Diffuse_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, diffusePos[0], diffusePos[1], diffusePos[2]);
+        glUniformMatrix4fv(Diffuse_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glUniform3fv(Diffuse_cube_color, 1, cubeCol);
+        glUniform3fv(Diffuse_light_color, 1, lightCol);
+        glUniform3fv(Diffuse_light_position, 1, lightPos);
+        glBindVertexArray(diffuseVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // specular
+        glUseProgram(SpecularShader.Program);
+        glUniformMatrix4fv(Specular_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(Specular_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, specularPos[0], specularPos[1], specularPos[2]);
+        glUniformMatrix4fv(Specular_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glUniform3fv(Specular_cube_color, 1, cubeCol);
+        glUniform3fv(Specular_light_color, 1, lightCol);
+        glUniform3fv(Specular_light_position, 1, lightPos);
+        glUniform3fv(Specular_camera_position, 1, cameraPos);
+        glBindVertexArray(specularVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // specular
+        glUseProgram(PhongShader.Program);
+        glUniformMatrix4fv(Phong_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(Phong_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, phongPos[0], phongPos[1], phongPos[2]);
+        glUniformMatrix4fv(Phong_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glUniform3fv(Phong_cube_color, 1, cubeCol);
+        glUniform3fv(Phong_light_color, 1, lightCol);
+        glUniform3fv(Phong_light_position, 1, lightPos);
+        glUniform3fv(Phong_camera_position, 1, cameraPos);
+        glBindVertexArray(phongVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
@@ -234,9 +365,17 @@ int main(void) {
     }
     glDeleteVertexArrays(1, &VAO);
     glDeleteVertexArrays(1, &lightVAO);
+    glDeleteVertexArrays(1, &ambientVAO);
+    glDeleteVertexArrays(1, &diffuseVAO);
+    glDeleteVertexArrays(1, &specularVAO);
+    glDeleteVertexArrays(1, &phongVAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(ColorShader.Program);
     glDeleteProgram(LightShader.Program);
+    glDeleteProgram(AmbientShader.Program);
+    glDeleteProgram(DiffuseShader.Program);
+    glDeleteProgram(SpecularShader.Program);
+    glDeleteProgram(PhongShader.Program);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -250,28 +389,59 @@ void processInput(GLFWwindow* window){
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
-    float cameraSpeed = 2.5f * deltaTime;
-    vec3 moveV;
-    moveV[0] = cameraSpeed * cameraFront[0];
-    moveV[1] = cameraSpeed * cameraFront[1];
-    moveV[2] = cameraSpeed * cameraFront[2];
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        vec3_add(cameraPos, cameraPos, moveV);
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+        isObservator = !isObservator;
     }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        vec3_sub(cameraPos, cameraPos, moveV);
-    }
-    vec3 moveH;
-    vec3_mul_cross(moveH, cameraFront, cameraUp);
-    vec3_norm(moveH, moveH);
-    moveH[0] = cameraSpeed * moveH[0];
-    moveH[1] = cameraSpeed * moveH[1];
-    moveH[2] = cameraSpeed * moveH[2];
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        vec3_sub(cameraPos, cameraPos, moveH);
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        vec3_add(cameraPos, cameraPos, moveH);
+    if (isObservator == false) {
+        float cameraSpeed = 2.5f * deltaTime;
+        vec3 moveV;
+        moveV[0] = cameraSpeed * cameraFront[0];
+        moveV[1] = cameraSpeed * cameraFront[1];
+        moveV[2] = cameraSpeed * cameraFront[2];
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            vec3_add(cameraPos, cameraPos, moveV);
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            vec3_sub(cameraPos, cameraPos, moveV);
+        }
+        vec3 moveH;
+        vec3_mul_cross(moveH, cameraFront, cameraUp);
+        vec3_norm(moveH, moveH);
+        moveH[0] = cameraSpeed * moveH[0];
+        moveH[1] = cameraSpeed * moveH[1];
+        moveH[2] = cameraSpeed * moveH[2];
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            vec3_sub(cameraPos, cameraPos, moveH);
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            vec3_add(cameraPos, cameraPos, moveH);
+        }
+        // move light source
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            vec3_sub(cameraPos, cameraPos, moveH);
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            vec3_add(cameraPos, cameraPos, moveH);
+        }
+    } else if (isObservator == true) {
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            lightPos[2] -= 0.1f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            lightPos[2] += 0.1f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            lightPos[0] -= 0.1f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+            lightPos[0] += 0.1f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+            lightPos[1] -= 0.1f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+            lightPos[1] += 0.1f;
+        }
     }
 }
 GLuint setVertexShader(const char* shader, GLuint ShaderReference) {
@@ -326,10 +496,13 @@ void setVertices(GLuint &VBO, GLuint &VAO){
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
     // position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
     // color attribute
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+    // normal attribute
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
 }
 float dot_product(vec3 v1, vec3 v2) {
     float product = 0;

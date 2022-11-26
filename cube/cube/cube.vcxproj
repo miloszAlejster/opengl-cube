@@ -158,8 +158,12 @@
     <ClInclude Include="linmath.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Ambient.shader" />
     <None Include="Colors.shader" />
+    <None Include="Diffuse.shader" />
     <None Include="Light.shader" />
+    <None Include="Phong.shader" />
+    <None Include="Specular.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
