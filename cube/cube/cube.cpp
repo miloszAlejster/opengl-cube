@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "linmath.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -8,48 +10,48 @@
 #include <sstream>
 
 const float cubeVertices[] = {
-    // position         // color          // normals
-    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
-    0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
-    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
-    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
-    -0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
-    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f,
+    // position         // color          // normals          // textures
+    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
 
-    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
-    -0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.5f, 0.3f, 0.7f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 
-    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
-    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f,
+    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.2f, 0.4f, 0.7f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
 
-    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
-    0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.1f, 0.1f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f,
+    -0.5f, -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 0.5f, 1.0f, 0.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f,
 
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
-    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
-    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f,
+    0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
+    -0.5f, 0.5f, -0.5f, 0.5f, 0.0f, 9.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f
 };
 const vec3 cubePositions[] = {
     {0.0f, 0.0f, 0.0f},
@@ -126,6 +128,10 @@ vec3 ambientPos = { 0.0f, 0.0f, -1.0f };
 vec3 diffusePos = { 2.0f, 0.0f, -1.0f };
 vec3 specularPos = { 4.0f, 0.0f, -1.0f };
 vec3 phongPos = { 6.0f, 0.0f, -1.0f };
+vec3 texturePos = { 8.0f, 0.0f, -1.0f };
+vec3 textureLambertPos = { 10.0f, 0.0f, -1.0f };
+int txWidth, txHeight, nrChannels;
+unsigned char* data = stbi_load("fabric.png", &txWidth, &txHeight, &nrChannels, 0);
 bool isObservator = false;
 int main(void) {
     GLFWwindow* window;
@@ -153,6 +159,14 @@ int main(void) {
     gladLoadGL();
     glfwSwapInterval(1);
     glEnable(GL_DEPTH_TEST);
+    // texture
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, txWidth, txHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    stbi_image_free(data);
     // Colors
     Shader ColorShader;
     addShader(ColorShader, "Colors.shader");
@@ -160,8 +174,6 @@ int main(void) {
     GLint m_location = glGetUniformLocation(ColorShader.Program, "model");
     GLint v_location = glGetUniformLocation(ColorShader.Program, "view");
     GLint p_location = glGetUniformLocation(ColorShader.Program, "projection");
-    GLint lightcubeColor = glGetUniformLocation(ColorShader.Program, "lighColor");
-    GLint lightcubePosition = glGetUniformLocation(ColorShader.Program, "lighPosition");
     // Light
     Shader LightShader;
     addShader(LightShader, "Light.shader");
@@ -211,6 +223,22 @@ int main(void) {
     GLint Phong_light_color = glGetUniformLocation(PhongShader.Program, "lightColor");
     GLint Phong_light_position = glGetUniformLocation(PhongShader.Program, "lightPos");
     GLint Phong_camera_position = glGetUniformLocation(PhongShader.Program, "viewPos");
+    // Texture
+    Shader TextureShader;
+    addShader(TextureShader, "Texture.shader");
+    // set uniforms
+    GLint Texture_m_location = glGetUniformLocation(TextureShader.Program, "model");
+    GLint Texture_v_location = glGetUniformLocation(TextureShader.Program, "view");
+    GLint Texture_p_location = glGetUniformLocation(TextureShader.Program, "projection");
+    // Texture lambert
+    Shader TextureLambertShader;
+    addShader(TextureLambertShader, "TextureLambert.shader");
+    // set uniforms
+    GLint TextureLambert_m_location = glGetUniformLocation(TextureLambertShader.Program, "model");
+    GLint TextureLambert_v_location = glGetUniformLocation(TextureLambertShader.Program, "view");
+    GLint TextureLambert_p_location = glGetUniformLocation(TextureLambertShader.Program, "projection");
+    GLint TextureLambert_light_color = glGetUniformLocation(TextureLambertShader.Program, "lightColor");
+    GLint TextureLambert_light_position = glGetUniformLocation(TextureLambertShader.Program, "lightPos");
     // set vertex buffer and array object for cubes
     setVertices(VBO, VAO);
     // set vertex array object for light
@@ -218,42 +246,62 @@ int main(void) {
     glGenVertexArrays(1, &lightVAO);
     glBindVertexArray(lightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // set vertex array object for ambient
     unsigned int ambientVAO;
     glGenVertexArrays(1, &ambientVAO);
     glBindVertexArray(ambientVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     // set vertex array object for diffuse
     unsigned int diffuseVAO;
     glGenVertexArrays(1, &diffuseVAO);
     glBindVertexArray(diffuseVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     // set vertex array object for specular
     unsigned int specularVAO;
     glGenVertexArrays(1, &specularVAO);
     glBindVertexArray(specularVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     // set vertex array object for phong
     unsigned int phongVAO;
     glGenVertexArrays(1, &phongVAO);
     glBindVertexArray(phongVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+    // set vertex array object for texture
+    unsigned int textureVAO;
+    glGenVertexArrays(1, &textureVAO);
+    glBindVertexArray(textureVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(9 * sizeof(float)));
+    glEnableVertexAttribArray(3);
+    // set vertex array object for texture lambert
+    unsigned int textureLambertVAO;
+    glGenVertexArrays(1, &textureLambertVAO);
+    glBindVertexArray(textureLambertVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(9 * sizeof(float)));
+    glEnableVertexAttribArray(3);
 
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
@@ -278,8 +326,6 @@ int main(void) {
         glUseProgram(ColorShader.Program);
         glUniformMatrix4fv(v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         glUniformMatrix4fv(p_location, 1, GL_FALSE, (const GLfloat*)projection);
-        glUniform3fv(lightcubePosition, 1, lightPos);
-        glUniform3fv(lightcubeColor, 1, lightCol);
         glBindVertexArray(VAO);
         for (unsigned int i = 0; i < 20; i++){
             float x = cubePositions[i][0];
@@ -346,7 +392,7 @@ int main(void) {
         glUniform3fv(Specular_camera_position, 1, cameraPos);
         glBindVertexArray(specularVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        // specular
+        // phong
         glUseProgram(PhongShader.Program);
         glUniformMatrix4fv(Phong_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         glUniformMatrix4fv(Phong_p_location, 1, GL_FALSE, (const GLfloat*)projection);
@@ -359,6 +405,28 @@ int main(void) {
         glUniform3fv(Phong_camera_position, 1, cameraPos);
         glBindVertexArray(phongVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        // texture
+        glUseProgram(TextureShader.Program);
+        glUniformMatrix4fv(Texture_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(Texture_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, texturePos[0], texturePos[1], texturePos[2]);
+        glUniformMatrix4fv(Texture_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindVertexArray(textureVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // texture lambert
+        glUseProgram(TextureLambertShader.Program);
+        glUniformMatrix4fv(TextureLambert_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
+        glUniformMatrix4fv(TextureLambert_p_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4_identity(model);
+        mat4x4_translate(model, textureLambertPos[0], textureLambertPos[1], textureLambertPos[2]);
+        glUniformMatrix4fv(TextureLambert_m_location, 1, GL_FALSE, (const GLfloat*)model);
+        glUniform3fv(TextureLambert_light_color, 1, lightCol);
+        glUniform3fv(TextureLambert_light_position, 1, lightPos);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glBindVertexArray(textureLambertVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -369,6 +437,8 @@ int main(void) {
     glDeleteVertexArrays(1, &diffuseVAO);
     glDeleteVertexArrays(1, &specularVAO);
     glDeleteVertexArrays(1, &phongVAO);
+    glDeleteVertexArrays(1, &textureVAO);
+    glDeleteVertexArrays(1, &textureLambertVAO);
     glDeleteBuffers(1, &VBO);
     glDeleteProgram(ColorShader.Program);
     glDeleteProgram(LightShader.Program);
@@ -376,6 +446,8 @@ int main(void) {
     glDeleteProgram(DiffuseShader.Program);
     glDeleteProgram(SpecularShader.Program);
     glDeleteProgram(PhongShader.Program);
+    glDeleteProgram(TextureShader.Program);
+    glDeleteProgram(TextureLambertShader.Program);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -496,13 +568,13 @@ void setVertices(GLuint &VBO, GLuint &VAO){
     glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
     // position attribute
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
     // color attribute
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
     // normal attribute
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
 }
 float dot_product(vec3 v1, vec3 v2) {
     float product = 0;

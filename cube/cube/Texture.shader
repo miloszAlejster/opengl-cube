@@ -1,26 +1,25 @@
 #shader vertex
 #version 330 core
 
+layout(location = 0) in vec3 aPos;
+layout(location = 3) in vec2 aTexCoord;
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
-layout(location = 0) in vec3 aPos;
+out vec2 TexCoord;
 
 void main(){
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
-};
+    TexCoord = aTexCoord;
+}
 
 #shader fragment
 #version 330 core
 
-uniform vec3 cubeColor;
-uniform vec3 lightColor;
+in vec2 TexCoord;
+uniform sampler2D Texture;
 out vec4 FragColor;
 
 void main(){
-    float ambientStrength = 0.2;
-    vec3 ambient = ambientStrength * lightColor;
-
-    vec3 result = ambient * cubeColor;
-    FragColor = vec4(result, 1.0f);
-};
+    FragColor = texture(Texture, TexCoord);
+}

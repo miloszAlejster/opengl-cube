@@ -9,7 +9,7 @@ layout(location = 2) in vec3 aNormal;
 out vec3 Normal;
 out vec3 FragPos;
 
-void main() {
+void main(){
     gl_Position = projection * view * model * vec4(aPos, 1.0f);
     FragPos = vec3(model * vec4(aPos, 1.0f));
     Normal = aNormal;
@@ -25,7 +25,7 @@ uniform vec3 lightColor;
 uniform vec3 lightPos;
 out vec4 FragColor;
 
-void main() {
+void main(){
     float ambientStrength = 0.2;
     vec3 ambient = ambientStrength * lightColor;
 

@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\shaders">
       <UniqueIdentifier>{a4be703a-4d95-4b12-9cae-e222b597bc8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\textures">
+      <UniqueIdentifier>{c70f3051-30ed-4960-bee5-bddefd8e860d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cube.cpp">
@@ -27,6 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="linmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -49,5 +55,16 @@
     <None Include="Phong.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
+    <None Include="Texture.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="TextureLambert.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="fabric.png">
+      <Filter>Resource Files\textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

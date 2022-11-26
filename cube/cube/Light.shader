@@ -7,7 +7,7 @@ uniform mat4 model;
 uniform mat4 scale;
 layout(location = 0) in vec3 aPos;
 
-void main() {
+void main(){
     gl_Position = projection * view * model * scale * vec4(aPos, 1.0f);
 };
 
@@ -16,6 +16,6 @@ void main() {
 
 out vec4 FragColor;
 
-void main() {
+void main(){
     FragColor = vec4(1.0f);
 };

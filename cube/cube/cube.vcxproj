@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="linmath.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Ambient.shader" />
@@ -164,6 +165,11 @@
     <None Include="Light.shader" />
     <None Include="Phong.shader" />
     <None Include="Specular.shader" />
+    <None Include="Texture.shader" />
+    <None Include="TextureLambert.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="fabric.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
