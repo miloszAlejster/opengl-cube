@@ -80,6 +80,7 @@ static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void processInput(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 GLuint setVertexShader(const char* shader, GLuint shaderReference);
@@ -153,6 +154,7 @@ int main(void) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
     // config
     glfwMakeContextCurrent(window);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -457,13 +459,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-void processInput(GLFWwindow* window){
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    }
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
         isObservator = !isObservator;
     }
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
+void processInput(GLFWwindow* window){
     if (isObservator == false) {
         float cameraSpeed = 2.5f * deltaTime;
         vec3 moveV;
