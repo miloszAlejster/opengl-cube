@@ -80,6 +80,7 @@ static void error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error: %s\n", description);
 }
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void processInput(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 GLuint setVertexShader(const char* shader, GLuint shaderReference);
@@ -121,8 +122,10 @@ float pitch = 0.0f;
 float fov = 45.0f;
 float lastX = 800.0f / 2.0f;
 float lastY = 600.0f / 2.0f;
+bool isObservator = false;
 vec3 lightCol = { 1.0f, 1.0f, 1.0f };
 vec3 cubeCol = { 0.670f, 0.234f, 0.605f };
+// cubes positions
 vec3 lightPos = { 3.0f, 2.0f, -1.0f };
 vec3 ambientPos = { 0.0f, 0.0f, -1.0f };
 vec3 diffusePos = { 2.0f, 0.0f, -1.0f };
@@ -130,9 +133,9 @@ vec3 specularPos = { 4.0f, 0.0f, -1.0f };
 vec3 phongPos = { 6.0f, 0.0f, -1.0f };
 vec3 texturePos = { 8.0f, 0.0f, -1.0f };
 vec3 textureLambertPos = { 10.0f, 0.0f, -1.0f };
+// texture
 int txWidth, txHeight, nrChannels;
 unsigned char* data = stbi_load("fabric.png", &txWidth, &txHeight, &nrChannels, 0);
-bool isObservator = false;
 int main(void) {
     GLFWwindow* window;
     GLuint VBO, VAO;
@@ -153,6 +156,7 @@ int main(void) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
     // config
     glfwMakeContextCurrent(window);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -167,17 +171,16 @@ int main(void) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, txWidth, txHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(data);
-    // Colors
-    Shader ColorShader;
-    addShader(ColorShader, "Colors.shader");
-    // set uniforms
-    GLint m_location = glGetUniformLocation(ColorShader.Program, "model");
-    GLint v_location = glGetUniformLocation(ColorShader.Program, "view");
-    GLint p_location = glGetUniformLocation(ColorShader.Program, "projection");
+    //// Colors
+    //Shader ColorShader;
+    //addShader(ColorShader, "Colors.shader");
+    //// set uniforms
+    //GLint m_location = glGetUniformLocation(ColorShader.Program, "model");
+    //GLint v_location = glGetUniformLocation(ColorShader.Program, "view");
+    //GLint p_location = glGetUniformLocation(ColorShader.Program, "projection");
     // Light
     Shader LightShader;
     addShader(LightShader, "Light.shader");
-    // set uniforms
     GLint mL_location = glGetUniformLocation(LightShader.Program, "model");
     GLint vL_location = glGetUniformLocation(LightShader.Program, "view");
     GLint pL_location = glGetUniformLocation(LightShader.Program, "projection");
@@ -185,7 +188,6 @@ int main(void) {
     // Ambient
     Shader AmbientShader;
     addShader(AmbientShader, "Ambient.shader");
-    // set uniforms
     GLint Ambient_m_location = glGetUniformLocation(AmbientShader.Program, "model");
     GLint Ambient_v_location = glGetUniformLocation(AmbientShader.Program, "view");
     GLint Ambient_p_location = glGetUniformLocation(AmbientShader.Program, "projection");
@@ -194,7 +196,6 @@ int main(void) {
     // Diffuse
     Shader DiffuseShader;
     addShader(DiffuseShader, "Diffuse.shader");
-    // set uniforms
     GLint Diffuse_m_location = glGetUniformLocation(DiffuseShader.Program, "model");
     GLint Diffuse_v_location = glGetUniformLocation(DiffuseShader.Program, "view");
     GLint Diffuse_p_location = glGetUniformLocation(DiffuseShader.Program, "projection");
@@ -204,7 +205,6 @@ int main(void) {
     // Specular
     Shader SpecularShader;
     addShader(SpecularShader, "Specular.shader");
-    // set uniforms
     GLint Specular_m_location = glGetUniformLocation(SpecularShader.Program, "model");
     GLint Specular_v_location = glGetUniformLocation(SpecularShader.Program, "view");
     GLint Specular_p_location = glGetUniformLocation(SpecularShader.Program, "projection");
@@ -215,7 +215,6 @@ int main(void) {
     // Specular
     Shader PhongShader;
     addShader(PhongShader, "Phong.shader");
-    // set uniforms
     GLint Phong_m_location = glGetUniformLocation(PhongShader.Program, "model");
     GLint Phong_v_location = glGetUniformLocation(PhongShader.Program, "view");
     GLint Phong_p_location = glGetUniformLocation(PhongShader.Program, "projection");
@@ -226,21 +225,22 @@ int main(void) {
     // Texture
     Shader TextureShader;
     addShader(TextureShader, "Texture.shader");
-    // set uniforms
     GLint Texture_m_location = glGetUniformLocation(TextureShader.Program, "model");
     GLint Texture_v_location = glGetUniformLocation(TextureShader.Program, "view");
     GLint Texture_p_location = glGetUniformLocation(TextureShader.Program, "projection");
     // Texture lambert
     Shader TextureLambertShader;
     addShader(TextureLambertShader, "TextureLambert.shader");
-    // set uniforms
     GLint TextureLambert_m_location = glGetUniformLocation(TextureLambertShader.Program, "model");
     GLint TextureLambert_v_location = glGetUniformLocation(TextureLambertShader.Program, "view");
     GLint TextureLambert_p_location = glGetUniformLocation(TextureLambertShader.Program, "projection");
     GLint TextureLambert_light_color = glGetUniformLocation(TextureLambertShader.Program, "lightColor");
     GLint TextureLambert_light_position = glGetUniformLocation(TextureLambertShader.Program, "lightPos");
-    // set vertex buffer and array object for cubes
-    setVertices(VBO, VAO);
+    //setVertices(VBO, VAO);
+    // set vertex buffer object
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
     // set vertex array object for light
     unsigned int lightVAO;
     glGenVertexArrays(1, &lightVAO);
@@ -313,7 +313,6 @@ int main(void) {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mat4x4 model;
         // view
         vec3 target;
         vec3_add(target, cameraFront, cameraPos);
@@ -339,10 +338,12 @@ int main(void) {
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         */
+
         // light
         glUseProgram(LightShader.Program);
         glUniformMatrix4fv(vL_location, 1, GL_FALSE, (const GLfloat*)view.mat);
         glUniformMatrix4fv(pL_location, 1, GL_FALSE, (const GLfloat*)projection);
+        mat4x4 model;
         mat4x4_identity(model);
         mat4x4_translate(model, lightPos[0], lightPos[1], lightPos[2]);
         // scale
@@ -356,6 +357,7 @@ int main(void) {
         glUniformMatrix4fv(mL_location, 1, GL_FALSE, (const GLfloat*)model);
         glBindVertexArray(lightVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // ambient
         glUseProgram(AmbientShader.Program);
         glUniformMatrix4fv(Ambient_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -367,6 +369,7 @@ int main(void) {
         glUniform3fv(Ambient_light_color, 1, lightCol);
         glBindVertexArray(ambientVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // diffuse
         glUseProgram(DiffuseShader.Program);
         glUniformMatrix4fv(Diffuse_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -379,6 +382,7 @@ int main(void) {
         glUniform3fv(Diffuse_light_position, 1, lightPos);
         glBindVertexArray(diffuseVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // specular
         glUseProgram(SpecularShader.Program);
         glUniformMatrix4fv(Specular_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -392,6 +396,7 @@ int main(void) {
         glUniform3fv(Specular_camera_position, 1, cameraPos);
         glBindVertexArray(specularVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // phong
         glUseProgram(PhongShader.Program);
         glUniformMatrix4fv(Phong_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -405,6 +410,7 @@ int main(void) {
         glUniform3fv(Phong_camera_position, 1, cameraPos);
         glBindVertexArray(phongVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // texture
         glUseProgram(TextureShader.Program);
         glUniformMatrix4fv(Texture_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -415,6 +421,7 @@ int main(void) {
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(textureVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // texture lambert
         glUseProgram(TextureLambertShader.Program);
         glUniformMatrix4fv(TextureLambert_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
@@ -440,7 +447,7 @@ int main(void) {
     glDeleteVertexArrays(1, &textureVAO);
     glDeleteVertexArrays(1, &textureLambertVAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(ColorShader.Program);
+    //glDeleteProgram(ColorShader.Program);
     glDeleteProgram(LightShader.Program);
     glDeleteProgram(AmbientShader.Program);
     glDeleteProgram(DiffuseShader.Program);
@@ -457,13 +464,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 }
-void processInput(GLFWwindow* window){
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    }
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
         isObservator = !isObservator;
     }
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+}
+void processInput(GLFWwindow* window){
     if (isObservator == false) {
         float cameraSpeed = 2.5f * deltaTime;
         vec3 moveV;
