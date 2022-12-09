@@ -160,5 +160,20 @@ bool loader(const char* path,
             }
         }
     }
+    for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+        unsigned int vertexIndex = vertexIndices[i];
+        std::vector<float> vertex = temp_vertices[vertexIndex - 1];
+        out_vertices.push_back(vertex);
+    }
+    for (unsigned int i = 0; i < uvIndices.size(); i++) {
+        unsigned int uvIndex = uvIndices[i];
+        std::vector<float> uv = temp_uvs[uvIndex - 1];
+        out_uvs.push_back(uv);
+    }
+    for (unsigned int i = 0; i < normalIndices.size(); i++) {
+        unsigned int normalIndex = normalIndices[i];
+        std::vector<float> normal = temp_normals[normalIndex - 1];
+        out_normals.push_back(normal);
+    }
     return true;
 }
