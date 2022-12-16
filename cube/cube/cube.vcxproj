@@ -153,10 +153,12 @@
   <ItemGroup>
     <ClCompile Include="src\cube.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\materialLoader.cpp" />
     <ClCompile Include="src\objLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\linmath.h" />
+    <ClInclude Include="src\materialLoader.h" />
     <ClInclude Include="src\objLoader.h" />
     <ClInclude Include="src\stb_image.h" />
   </ItemGroup>

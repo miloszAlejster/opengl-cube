@@ -30,6 +30,9 @@
     <ClCompile Include="src\glad.c">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\materialLoader.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\objLoader.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\materialLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

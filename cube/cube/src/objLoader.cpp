@@ -24,7 +24,7 @@ static bool isContiguous(std::string s, char c) {
     return false;
 }
 // _CRT_SECURE_NO_WARNINGS
-void static objLoader(const char* path,std::vector<Vectors>& out_vecrites){
+void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std::string &matPath){
     // TODO: add inexes for ebo
     std::vector<std::vector<float>> position;
     std::vector<std::vector<float>> texture;
@@ -44,7 +44,7 @@ void static objLoader(const char* path,std::vector<Vectors>& out_vecrites){
 
     FILE* file = fopen(path, "r");
     if (file == NULL) {
-        std::cout << "Error in obj: " << path << std::endl;
+        std::cout << "Failed to open object file: " << path << std::endl;
         return;
     }
 
@@ -96,6 +96,14 @@ void static objLoader(const char* path,std::vector<Vectors>& out_vecrites){
                 out_vecrites.push_back(tempVectors);
             }
         }
-        // TODO: add material
+        else if (strcmp(lineHeader, "mtllib") == 0) {
+            char tempPath[128] = "";
+            if (fscanf(file, "%s", tempPath) != 1) {
+                std::cout << "Error in object mtllib\nnChange object file\n" << std::endl;
+            }
+            else {
+                matPath = tempPath;
+            }
+        }
     }
 }

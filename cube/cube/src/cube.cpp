@@ -8,8 +8,9 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
 #include "objLoader.cpp"
-
+#include "materialLoader.cpp"
 const float cubeVertices[] = {
     // position         // color          // normals          // textures
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -113,7 +114,11 @@ int main(void) {
     init();
     GLuint VBO_object, VAO;
     std::vector<Vectors> vectices;
-    objLoader("./resources/monkey.obj", vectices);
+    std::vector<Material> materials;
+    std::string materialPath;
+    objLoader("./resources/monkey.obj", vectices, materialPath);
+    materialLoader(materialPath, materials);
+    //std::cout << materials[0].specular[0] << std::endl;
     // texture
     unsigned int texture;
     glGenTextures(1, &texture);
