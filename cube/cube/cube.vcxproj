@@ -151,26 +151,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp" />
-    <ClCompile Include="glad.c" />
-    <ClCompile Include="objLoader.cpp" />
+    <ClCompile Include="src\cube.cpp" />
+    <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\objLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="linmath.h" />
-    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="src\linmath.h" />
+    <ClInclude Include="src\objLoader.h" />
+    <ClInclude Include="src\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ambient.shader" />
-    <None Include="Colors.shader" />
-    <None Include="Diffuse.shader" />
-    <None Include="Light.shader" />
-    <None Include="Phong.shader" />
-    <None Include="Specular.shader" />
-    <None Include="Texture.shader" />
-    <None Include="TextureLambert.shader" />
+    <Image Include="resources\fabric.png" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="fabric.png" />
+    <None Include="src\Ambient.shader" />
+    <None Include="src\Colors.shader" />
+    <None Include="src\Diffuse.shader" />
+    <None Include="src\Light.shader" />
+    <None Include="src\Phong.shader" />
+    <None Include="src\Specular.shader" />
+    <None Include="src\Texture.shader" />
+    <None Include="src\TextureLambert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
