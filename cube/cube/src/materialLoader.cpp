@@ -11,6 +11,7 @@ static void materialLoader(std::string path, std::vector<Material>& materials) {
     std::string prePath = "./resources/";
     path = prePath + path;
     FILE* file = fopen(path.c_str(), "r");
+    bool isFirst = true;
     if (file == NULL) {
         std::cout << "Failed to open material file: \n" << path << std::endl;
         return;
@@ -19,6 +20,8 @@ static void materialLoader(std::string path, std::vector<Material>& materials) {
         char lineHeader[128] = {0};
         int res = fscanf(file, "%s", lineHeader);
         if (res == EOF) {
+            // last material
+            materials.push_back(temp_material);
             break;
         }
         if (strcmp(lineHeader, "newmtl") == 0) {
@@ -26,7 +29,12 @@ static void materialLoader(std::string path, std::vector<Material>& materials) {
                 std::cout << "Error in material newmtl\nnChange material file\n" << std::endl;
             }
             else {
-                materials.push_back(temp_material);
+                if (isFirst == true) {
+                    isFirst = false;
+                }
+                else if (isFirst = false) {
+                    materials.push_back(temp_material);
+                }
             }
         }
         else if (strcmp(lineHeader, "Ka") == 0) {

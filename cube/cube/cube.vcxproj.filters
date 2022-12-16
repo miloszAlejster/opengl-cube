@@ -47,6 +47,9 @@
     <ClInclude Include="src\materialLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\fabric.png">
@@ -54,28 +57,31 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Ambient.shader">
+    <None Include="src\shaders\Ambient.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Colors.shader">
+    <None Include="src\shaders\Colors.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Diffuse.shader">
+    <None Include="src\shaders\Diffuse.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Light.shader">
+    <None Include="src\shaders\Light.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Phong.shader">
+    <None Include="src\shaders\Phong.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Specular.shader">
+    <None Include="src\shaders\Specular.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\Texture.shader">
+    <None Include="src\shaders\Texture.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
-    <None Include="src\TextureLambert.shader">
+    <None Include="src\shaders\TextureLambert.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Material.shader">
       <Filter>Resource Files\shaders</Filter>
     </None>
   </ItemGroup>

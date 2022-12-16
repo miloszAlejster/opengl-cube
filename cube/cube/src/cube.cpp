@@ -11,6 +11,7 @@
 #include <string>
 #include "objLoader.cpp"
 #include "materialLoader.cpp"
+#include "shader.h"
 const float cubeVertices[] = {
     // position         // color          // normals          // textures
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -70,19 +71,7 @@ struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
 struct mat4 {
     mat4x4 mat;
 };
-struct ShaderProgramSource {
-    std::string VertexSource;
-    std::string FragmentSource;
-};
-struct Shader {
-    GLuint Vertex;
-    GLuint Fragment;
-    GLuint Program;
-};
 float toRadians(float degree);
-static ShaderProgramSource ParseShader(const std::string& path);
-void addShader(Shader &shader, std::string path);
-void deleteShader(Shader& shader);
 void init();
 
 const unsigned int SCR_WIDTH = 800;
@@ -109,16 +98,16 @@ vec3 lightPos = { 3.0f, 2.0f, -1.0f };
 vec3 textureLambertPos = { 0.0f, 0.0f, -1.0f };
 // texture
 int txWidth, txHeight, nrChannels;
-unsigned char* texture_data = stbi_load("./resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
+unsigned char* texture_data = stbi_load("resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
 int main(void) {
     init();
     GLuint VBO_object, VAO;
     std::vector<Vectors> vectices;
     std::vector<Material> materials;
     std::string materialPath;
-    objLoader("./resources/monkey.obj", vectices, materialPath);
+    objLoader("resources/monkey.obj", vectices, materialPath);
     materialLoader(materialPath, materials);
-    //std::cout << materials[0].specular[0] << std::endl;
+    //std::cout << materials[1].specular[0] << std::endl;
     // texture
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -127,30 +116,20 @@ int main(void) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, txWidth, txHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
     glGenerateMipmap(GL_TEXTURE_2D);
     stbi_image_free(texture_data);
-    // Texture lambert
-    Shader TextureLambertShader;
-    addShader(TextureLambertShader, "./src/shaders/TextureLambert.shader");
-    GLint TextureLambert_m_location = glGetUniformLocation(TextureLambertShader.Program, "model");
-    GLint TextureLambert_v_location = glGetUniformLocation(TextureLambertShader.Program, "view");
-    GLint TextureLambert_p_location = glGetUniformLocation(TextureLambertShader.Program, "projection");
-    GLint TextureLambert_light_color = glGetUniformLocation(TextureLambertShader.Program, "lightColor");
-    GLint TextureLambert_light_position = glGetUniformLocation(TextureLambertShader.Program, "lightPos");
+    Shader MaterialShader("src/shaders/Material.shader");
     // set vertex buffer object
+    glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO_object);
-    unsigned int textureLambertVAO;
-    glGenVertexArrays(1, &textureLambertVAO);
-    glBindVertexArray(textureLambertVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
     glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
-    // set vertex array object for texture lambert
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
+    glBindVertexArray(VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);
-    // frame loop
+    // render
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -173,23 +152,25 @@ int main(void) {
         mat4x4_identity(model);
         mat4x4_translate(model, textureLambertPos[0], textureLambertPos[1], textureLambertPos[2]);
         // texture lambert
-        glUseProgram(TextureLambertShader.Program);
-        glUniformMatrix4fv(TextureLambert_v_location, 1, GL_FALSE, (const GLfloat*)view.mat);
-        glUniformMatrix4fv(TextureLambert_p_location, 1, GL_FALSE, (const GLfloat*)projection);
-        glUniformMatrix4fv(TextureLambert_m_location, 1, GL_FALSE, (const GLfloat*)model);
-        glUniform3fv(TextureLambert_light_color, 1, lightCol);
-        glUniform3fv(TextureLambert_light_position, 1, lightPos);
+        MaterialShader.use();
+        MaterialShader.setMat4("view", view.mat);
+        MaterialShader.setMat4("projection", projection);
+        MaterialShader.setMat4("model", model);
+        MaterialShader.setVec3("lightPos", lightPos);
+        MaterialShader.setVec3("lightCol", lightCol);
+        MaterialShader.setVec3("material.ambient", materials[0].ambient);
+        MaterialShader.setVec3("material.diffuse", materials[0].diffuse);
+        MaterialShader.setVec3("material.specular", materials[0].specular);
+        MaterialShader.setFloat("material.shininess", materials[0].shininess);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(textureLambertVAO);
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, vectices.size());
-        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    glDeleteVertexArrays(1, &textureLambertVAO);
+    glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO_object);
-    glDeleteProgram(TextureLambertShader.Program);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -405,48 +386,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
     if (fov > 120.0f) {
         fov = 120.0f;
     }
-}
-static ShaderProgramSource ParseShader(const std::string& path) {
-    // his idea
-    // https://www.youtube.com/watch?v=2pv0Fbo-7ms
-    std::ifstream stream;
-    try {
-        stream.open(path);
-    } catch (std::ios_base::failure&) {
-        throw std::system_error{ errno, std::generic_category(), path };
-    }
-    enum class ShaderType {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while (getline(stream, line)){
-        if (line.find("#shader") != std::string::npos) {
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
-            }
-            else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
-            }
-        } else {
-            ss[(int)type] << line << '\n';
-        }
-    }
-    return { ss[0].str(), ss[1].str() };
-}
-void addShader(Shader &shader, std::string path) {
-    ShaderProgramSource colorShaderSource = ParseShader(path);
-    shader.Vertex = glCreateShader(GL_VERTEX_SHADER);
-    shader.Fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    shader.Program = glCreateProgram();
-    shader.Vertex = setVertexShader(colorShaderSource.VertexSource.c_str(), shader.Vertex);
-    shader.Fragment = setFragmentShader(colorShaderSource.FragmentSource.c_str(), shader.Fragment);
-    shader.Program = setProgram(shader.Program, shader.Vertex, shader.Fragment);
-}
-void deleteShader(Shader& shader) {
-    glDeleteShader(shader.Vertex);
-    glDeleteShader(shader.Fragment);
 }
 void init() {
     // init glfw

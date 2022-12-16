@@ -160,20 +160,22 @@
     <ClInclude Include="src\linmath.h" />
     <ClInclude Include="src\materialLoader.h" />
     <ClInclude Include="src\objLoader.h" />
+    <ClInclude Include="src\shader.h" />
     <ClInclude Include="src\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\fabric.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Ambient.shader" />
-    <None Include="src\Colors.shader" />
-    <None Include="src\Diffuse.shader" />
-    <None Include="src\Light.shader" />
-    <None Include="src\Phong.shader" />
-    <None Include="src\Specular.shader" />
-    <None Include="src\Texture.shader" />
-    <None Include="src\TextureLambert.shader" />
+    <None Include="src\shaders\Ambient.shader" />
+    <None Include="src\shaders\Colors.shader" />
+    <None Include="src\shaders\Diffuse.shader" />
+    <None Include="src\shaders\Light.shader" />
+    <None Include="src\shaders\Material.shader" />
+    <None Include="src\shaders\Phong.shader" />
+    <None Include="src\shaders\Specular.shader" />
+    <None Include="src\shaders\Texture.shader" />
+    <None Include="src\shaders\TextureLambert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
