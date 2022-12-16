@@ -101,13 +101,14 @@ int txWidth, txHeight, nrChannels;
 unsigned char* texture_data = stbi_load("resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
 int main(void) {
     init();
-    GLuint VBO_object, VAO;
+    GLuint VBO_object, VAO, EBO;
     std::vector<Vectors> vectices;
     std::vector<Material> materials;
     std::string materialPath;
-    objLoader("resources/monkey.obj", vectices, materialPath);
+    std::vector<int> faceIndex;
+    objLoader("resources/monkey.obj", vectices, materialPath, faceIndex);
     materialLoader(materialPath, materials);
-    //std::cout << materials[1].specular[0] << std::endl;
+    //std::cout << faceIndex.size() << std::endl;
     // texture
     unsigned int texture;
     glGenTextures(1, &texture);
@@ -120,8 +121,12 @@ int main(void) {
     // set vertex buffer object
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO_object);
+    glGenBuffers(1, &EBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
     glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
+    // nie dzia³a jeszcze
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, faceIndex.size() * sizeof(int), &faceIndex.front(), GL_STATIC_DRAW);
     glBindVertexArray(VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)0);
     glEnableVertexAttribArray(0);
@@ -165,6 +170,9 @@ int main(void) {
         glBindTexture(GL_TEXTURE_2D, texture);
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, vectices.size());
+        // nie dzia³a jeszcze
+        /*glDrawElements(GL_TRIANGLES, faceIndex.size(), GL_UNSIGNED_INT, 0);*/
+        glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

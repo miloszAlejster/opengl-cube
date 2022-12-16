@@ -24,7 +24,7 @@ static bool isContiguous(std::string s, char c) {
     return false;
 }
 // _CRT_SECURE_NO_WARNINGS
-void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std::string &matPath){
+void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std::string &matPath, std::vector<int>& faceIndex){
     // TODO: add inexes for ebo
     std::vector<std::vector<float>> position;
     std::vector<std::vector<float>> texture;
@@ -32,6 +32,7 @@ void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std:
     std::vector<float> tempPositon;
     std::vector<float> tempTexture;
     std::vector<float> tempNormal;
+    int counter = 0;
     // allocate memory in vectors
     tempPositon.push_back(float());
     tempPositon.push_back(float());
@@ -70,6 +71,7 @@ void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std:
             }
         }
         else if (strcmp(lineHeader, "f") == 0) {
+            faceIndex.push_back(counter++);
             unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
             // TODO: change it to other options
             int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n",

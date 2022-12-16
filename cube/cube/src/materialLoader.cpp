@@ -32,7 +32,7 @@ static void materialLoader(std::string path, std::vector<Material>& materials) {
                 if (isFirst == true) {
                     isFirst = false;
                 }
-                else if (isFirst = false) {
+                else if (isFirst == false) {
                     materials.push_back(temp_material);
                 }
             }
