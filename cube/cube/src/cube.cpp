@@ -95,7 +95,7 @@ bool isObservator = false;
 vec3 lightCol = { 1.0f, 1.0f, 1.0f };
 // objs positions
 vec3 lightPos = { 3.0f, 2.0f, -1.0f };
-vec3 textureLambertPos = { 0.0f, 0.0f, -1.0f };
+vec3 objecttPos = { 0.0f, 0.0f, -1.0f };
 // texture
 int txWidth, txHeight, nrChannels;
 unsigned char* texture_data = stbi_load("resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
@@ -125,6 +125,7 @@ int main(void) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
     glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
     // nie dzia³a jeszcze
+    // rozumiem, ¿e problem le¿y w objLoader, ale nie zd¹¿y³em zaimlementowaæ sprawdzania powtórzeñ faców
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, faceIndex.size() * sizeof(int), &faceIndex.front(), GL_STATIC_DRAW);
     glBindVertexArray(VAO);
@@ -155,8 +156,8 @@ int main(void) {
         // model
         mat4x4 model;
         mat4x4_identity(model);
-        mat4x4_translate(model, textureLambertPos[0], textureLambertPos[1], textureLambertPos[2]);
-        // texture lambert
+        mat4x4_translate(model, objecttPos[0], objecttPos[1], objecttPos[2]);
+        // shader
         MaterialShader.use();
         MaterialShader.setMat4("view", view.mat);
         MaterialShader.setMat4("projection", projection);
