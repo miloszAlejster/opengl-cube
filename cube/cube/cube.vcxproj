@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -109,7 +109,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -124,7 +124,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -139,7 +139,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -151,25 +151,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp" />
-    <ClCompile Include="glad.c" />
+    <ClCompile Include="src\cube.cpp" />
+    <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\materialLoader.cpp" />
+    <ClCompile Include="src\objLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="linmath.h" />
-    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="src\linmath.h" />
+    <ClInclude Include="src\materialLoader.h" />
+    <ClInclude Include="src\objLoader.h" />
+    <ClInclude Include="src\shader.h" />
+    <ClInclude Include="src\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Ambient.shader" />
-    <None Include="Colors.shader" />
-    <None Include="Diffuse.shader" />
-    <None Include="Light.shader" />
-    <None Include="Phong.shader" />
-    <None Include="Specular.shader" />
-    <None Include="Texture.shader" />
-    <None Include="TextureLambert.shader" />
+    <Image Include="resources\fabric.png" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="fabric.png" />
+    <None Include="src\shaders\Ambient.shader" />
+    <None Include="src\shaders\Colors.shader" />
+    <None Include="src\shaders\Diffuse.shader" />
+    <None Include="src\shaders\Light.shader" />
+    <None Include="src\shaders\Material.shader" />
+    <None Include="src\shaders\Phong.shader" />
+    <None Include="src\shaders\Specular.shader" />
+    <None Include="src\shaders\Texture.shader" />
+    <None Include="src\shaders\TextureLambert.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,50 +21,68 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cube.cpp">
+    <ClCompile Include="src\objLoader.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="glad.c">
+    <ClCompile Include="src\glad.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\materialLoader.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="linmath.h">
+    <ClInclude Include="src\objLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
+    <ClInclude Include="src\linmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\materialLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Colors.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Light.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Diffuse.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Ambient.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Specular.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Phong.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="Texture.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-    <None Include="TextureLambert.shader">
-      <Filter>Resource Files\shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="fabric.png">
+    <Image Include="resources\fabric.png">
       <Filter>Resource Files\textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shaders\Ambient.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Colors.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Diffuse.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Light.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Phong.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Specular.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Texture.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\TextureLambert.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
+    <None Include="src\shaders\Material.shader">
+      <Filter>Resource Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
