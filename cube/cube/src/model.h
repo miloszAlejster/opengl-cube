@@ -19,6 +19,9 @@ public:
 		texturePath = texturePathIn;
 		setupModel();
 	}
+	std::vector<Material> getModelMaterials(){
+		return materials;
+	}
 	void Draw(Shader& shader) {
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
@@ -26,7 +29,7 @@ public:
 		glBindVertexArray(0);
 	}
 private:
-	GLuint VBO_object, VAO, EBO;
+	GLuint VBO, VAO, EBO;
 	// texture
 	int txWidth, txHeight, nrChannels;
 	unsigned int texture;
@@ -42,9 +45,9 @@ private:
 		stbi_image_free(texture_data);
 		// set vertex buffer object
 		glGenVertexArrays(1, &VAO);
-		glGenBuffers(1, &VBO_object);
+		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
 
 		glBindVertexArray(VAO);

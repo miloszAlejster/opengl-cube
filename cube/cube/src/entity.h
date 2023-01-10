@@ -29,34 +29,14 @@ protected:
         mat4x4 rotationMatrix;
         mat4x4_mul(rotationMatrix, transformZ, transformY);
         mat4x4_mul(rotationMatrix, rotationMatrix, transformX);
-        mat4x4 translationMatrix;
-        mat4x4_identity(translationMatrix);
-        mat4x4_translate(translationMatrix, pos[0], pos[1], pos[2]);
+        mat4 translationMatrix;
+        mat4x4_identity(translationMatrix.mat);
+        mat4x4_translate(translationMatrix.mat, pos[0], pos[1], pos[2]);
         mat4x4 scaleMatrix;
         mat4x4_scale_aniso(scaleMatrix, scaleMatrix, scale[0], scale[1], scale[2]);
         mat4x4_mul(rotationMatrix, scaleMatrix, rotationMatrix);
-        mat4x4_mul(translationMatrix, rotationMatrix, translationMatrix);
-        mat4 translationMatrixOut;
-        translationMatrixOut.mat[0][0] = translationMatrix[0][0];
-        translationMatrixOut.mat[0][1] = translationMatrix[0][1];
-        translationMatrixOut.mat[0][2] = translationMatrix[0][2];
-        translationMatrixOut.mat[0][3] = translationMatrix[0][3];
-
-        translationMatrixOut.mat[1][0] = translationMatrix[1][0];
-        translationMatrixOut.mat[1][1] = translationMatrix[1][1];
-        translationMatrixOut.mat[1][2] = translationMatrix[1][2];
-        translationMatrixOut.mat[1][3] = translationMatrix[1][3];
-
-        translationMatrixOut.mat[2][0] = translationMatrix[2][0];
-        translationMatrixOut.mat[2][1] = translationMatrix[2][1];
-        translationMatrixOut.mat[2][2] = translationMatrix[2][2];
-        translationMatrixOut.mat[2][3] = translationMatrix[2][3];
-
-        translationMatrixOut.mat[3][0] = translationMatrix[3][0];
-        translationMatrixOut.mat[3][1] = translationMatrix[3][1];
-        translationMatrixOut.mat[3][2] = translationMatrix[3][2];
-        translationMatrixOut.mat[3][3] = translationMatrix[3][3];
-        return translationMatrixOut;
+        mat4x4_mul(translationMatrix.mat, rotationMatrix, translationMatrix.mat);
+        return translationMatrix;
     }
 public:
     void computeModelMatrix() {
