@@ -157,10 +157,10 @@
     <ClCompile Include="src\objLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="entity.h" />
-    <ClInclude Include="model.h" />
+    <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\linmath.h" />
     <ClInclude Include="src\materialLoader.h" />
+    <ClInclude Include="src\model.h" />
     <ClInclude Include="src\objLoader.h" />
     <ClInclude Include="src\shader.h" />
     <ClInclude Include="src\stb_image.h" />

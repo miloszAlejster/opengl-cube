@@ -1,10 +1,11 @@
 #ifndef MODEL_H
 #define MODEL_H
-#include "src/shader.h"
+#include "shader.h"
 #include <vector>
-#include "src/objLoader.h"
-#include "src/materialLoader.h"
-#include "src/stb_image.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#include "objLoader.h"
+#include "materialLoader.h"
 
 class Model {
 public:

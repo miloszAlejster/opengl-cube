@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-static void materialLoader(std::string path, std::vector<Material>& materials) {
+void materialLoader(std::string path, std::vector<Material>& materials) {
     Material temp_material;
     std::string prePath = "./resources/";
     path = prePath + path;

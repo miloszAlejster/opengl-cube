@@ -50,10 +50,10 @@
     <ClInclude Include="src\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="src\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="entity.h">
+    <ClInclude Include="src\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

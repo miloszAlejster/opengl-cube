@@ -24,7 +24,7 @@ static bool isContiguous(std::string s, char c) {
     return false;
 }
 // _CRT_SECURE_NO_WARNINGS
-void static objLoader(const char* path, std::vector<Vectors>& out_vecrites, std::string &matPath, std::vector<int>& faceIndex){
+void objLoader(const char* path, std::vector<Vectors>& out_vecrites, std::string &matPath, std::vector<int>& faceIndex){
     // TODO: add inexes for ebo
     std::vector<std::vector<float>> position;
     std::vector<std::vector<float>> texture;

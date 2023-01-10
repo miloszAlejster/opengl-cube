@@ -1,3 +1,5 @@
+#ifndef MATERIALLOADER_H
+#define MATERIALLOADER_H 
 #include "linmath.h"
 #include <vector>
 #include <string>
@@ -9,4 +11,5 @@ struct Material {
     vec3 specular;
     float shininess;
 };
-static void materialLoader(std::string path, std::vector<Material>& materials);
+void materialLoader(std::string path, std::vector<Material>& materials);
+#endif // !MATERIALLOADER_H

@@ -1,17 +1,18 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "linmath.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+//#include "stb_image.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "objLoader.cpp"
-#include "materialLoader.cpp"
+//#include "objLoader.cpp"
+//#include "materialLoader.cpp"
 #include "shader.h"
+#include "model.h"
+#include "entity.h"
 const float cubeVertices[] = {
     // position         // color          // normals          // textures
     -0.5f, -0.5f, -0.5f, 0.9f, 0.1f, 0.9f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
@@ -68,9 +69,6 @@ void mouse_callback(GLFWwindow* window, double x, double y);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 static void error_callback(int error, const char* description);
 struct mat4 LookAtRH(vec3 eye, vec3 target, vec3 up);
-struct mat4 {
-    mat4x4 mat;
-};
 float toRadians(float degree);
 void init();
 
@@ -97,44 +95,60 @@ vec3 lightCol = { 1.0f, 1.0f, 1.0f };
 vec3 lightPos = { 3.0f, 2.0f, -1.0f };
 vec3 objecttPos = { 0.0f, 0.0f, -1.0f };
 // texture
-int txWidth, txHeight, nrChannels;
-unsigned char* texture_data = stbi_load("resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
+//int txWidth, txHeight, nrChannels;
+//unsigned char* texture_data = stbi_load("resources/fabric.png", &txWidth, &txHeight, &nrChannels, 0);
 int main(void) {
     init();
-    GLuint VBO_object, VAO, EBO;
-    std::vector<Vectors> vectices;
-    std::vector<Material> materials;
-    std::string materialPath;
-    std::vector<int> faceIndex;
-    objLoader("resources/monkey.obj", vectices, materialPath, faceIndex);
-    materialLoader(materialPath, materials);
+    //GLuint VBO_object, VAO, EBO;
+    //std::vector<Vectors> vectices;
+    //std::vector<Material> materials;
+    //std::string materialPath;
+    //std::vector<int> faceIndex;
+    //objLoader("resources/monkey.obj", vectices, materialPath, faceIndex);
+    //materialLoader(materialPath, materials);
+    //
+    Model model = Model("resources/monkey.obj", "resources/fabric.png");
+    Entity entity(model);
+    entity.transform.setLocalPosition(vec3{10.0f, 0.0f, 0.0f});
+    const float scale = 0.5;
+    entity.transform.setLocalScale(vec3{ scale, scale, scale });
+    Entity* lastEntity = &entity;
+
+    for (unsigned int i = 0; i < 10; ++i){
+        lastEntity->addChild(model);
+        lastEntity = lastEntity->children.back().get();
+        //Set tranform values
+        lastEntity->transform.setLocalPosition(vec3{ 10.0f, 0.0f, 0.0f });
+        lastEntity->transform.setLocalScale(vec3{ scale, scale, scale });
+    }
+    entity.updateSelfAndChild();
     //std::cout << faceIndex.size() << std::endl;
     // texture
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, txWidth, txHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    stbi_image_free(texture_data);
+    //unsigned int texture;
+    //glGenTextures(1, &texture);
+    //glBindTexture(GL_TEXTURE_2D, texture);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, txWidth, txHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
+    //glGenerateMipmap(GL_TEXTURE_2D);
+    //stbi_image_free(texture_data);
     Shader MaterialShader("src/shaders/Material.shader");
     // set vertex buffer object
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO_object);
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
-    glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
+    //glGenVertexArrays(1, &VAO);
+    //glGenBuffers(1, &VBO_object);
+    //glGenBuffers(1, &EBO);
+    //glBindBuffer(GL_ARRAY_BUFFER, VBO_object);
+    //glBufferData(GL_ARRAY_BUFFER, vectices.size() * sizeof(Vectors), &vectices.front(), GL_STATIC_DRAW);
     // nie dzia³a jeszcze
     // rozumiem, ¿e problem le¿y w objLoader, ale nie zd¹¿y³em zaimlementowaæ sprawdzania powtórzeñ faców
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, faceIndex.size() * sizeof(int), &faceIndex.front(), GL_STATIC_DRAW);
-    glBindVertexArray(VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(5 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    //glBindVertexArray(VAO);
+    //glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)0);
+    //glEnableVertexAttribArray(0);
+    //glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(3 * sizeof(float)));
+    //glEnableVertexAttribArray(1);
+    //glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vectors), (void*)(5 * sizeof(float)));
+    //glEnableVertexAttribArray(2);
     // render
     while (!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
@@ -154,32 +168,41 @@ int main(void) {
         mat4x4 projection;
         mat4x4_perspective(projection, toRadians(fov), aspect, 0.1f, 100.f);
         // model
-        mat4x4 model;
-        mat4x4_identity(model);
-        mat4x4_translate(model, objecttPos[0], objecttPos[1], objecttPos[2]);
+        //mat4x4 model;
+        //mat4x4_identity(model);
+        //mat4x4_translate(model, objecttPos[0], objecttPos[1], objecttPos[2]);
         // shader
         MaterialShader.use();
         MaterialShader.setMat4("view", view.mat);
         MaterialShader.setMat4("projection", projection);
-        MaterialShader.setMat4("model", model);
-        MaterialShader.setVec3("lightPos", lightPos);
-        MaterialShader.setVec3("lightCol", lightCol);
-        MaterialShader.setVec3("material.ambient", materials[0].ambient);
-        MaterialShader.setVec3("material.diffuse", materials[0].diffuse);
-        MaterialShader.setVec3("material.specular", materials[0].specular);
-        MaterialShader.setFloat("material.shininess", materials[0].shininess);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, vectices.size());
+        //MaterialShader.setMat4("model", model);
+        //MaterialShader.setVec3("lightPos", lightPos);
+        //MaterialShader.setVec3("lightCol", lightCol);
+        //MaterialShader.setVec3("material.ambient", materials[0].ambient);
+        //MaterialShader.setVec3("material.diffuse", materials[0].diffuse);
+        //MaterialShader.setVec3("material.specular", materials[0].specular);
+        //MaterialShader.setFloat("material.shininess", materials[0].shininess);
+        Entity* lastEntity = &entity;
+        while (lastEntity->children.size())
+        {
+            MaterialShader.setMat4("model", lastEntity->transform.getModelMatrix().mat);
+            lastEntity->model->Draw(MaterialShader);
+            lastEntity = lastEntity->children.back().get();
+        }
+        entity.transform.setLocalRotation(vec3{ 0.0f, entity.transform.getLocalRotation(1) + 20.0f * deltaTime, 0.0f });
+        entity.updateSelfAndChild();
+        //glBindTexture(GL_TEXTURE_2D, texture);
+        //glBindVertexArray(VAO);
+        //glDrawArrays(GL_TRIANGLES, 0, vectices.size());
         // nie dzia³a jeszcze
         /*glDrawElements(GL_TRIANGLES, faceIndex.size(), GL_UNSIGNED_INT, 0);*/
-        glBindVertexArray(0);
+        //glBindVertexArray(0);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO_object);
+    //glDeleteVertexArrays(1, &VAO);
+    //glDeleteBuffers(1, &VBO_object);
     glfwDestroyWindow(window);
 
     glfwTerminate();
@@ -383,10 +406,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos){
     direction[2] = sin(toRadians(yaw)) * cos(toRadians(pitch));
     vec3_norm(cameraFront, direction);
 }
-float toRadians(float degree){
-    float pi = (float)3.14159265359;
-    return (degree * (pi / 180.0f));
-}
+//float toRadians(float degree){
+//    float pi = (float)3.14159265359;
+//    return (degree * (pi / 180.0f));
+//}
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
     fov -= (float)yoffset;
     if (fov < 10.0f) {
